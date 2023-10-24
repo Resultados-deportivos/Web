@@ -1,20 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Sun or No?</title>
-  <link rel="stylesheet" href="./static/style.css">
+    <title>Basket</title>
+    <link rel="stylesheet" href="./static/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="./static/img/icon.png" type="image/x-icon">
 </head>
 <body>
     <header>
+        <div class="icon">
+                <img src="./static/img/icon.png" alt="" srcset="">
+        </div>
+        <div class="nav">
+            <nav>
+                <ul>
+                    <li><a href="#">Partidos</a></li>
+                    <li><a href="#">Competicicones</a></li>
+                    <li><a href="#">Equipos</a></li>
+                </ul>
+            </nav>
+        </div>
 
+        <div class="search">
+            <button>
+                <span class="material-symbols-outlined">search</span>
+            </button>
+            <div></div>
+        </div>
+        <div class="register">
+            <button>INICIAR SESIÓN</button>
+            <button>ÚNETE</button>
+        </div>
     </header>
     <main>
         {% block maincontent %}
         {% endblock %}
     </main>
     <footer>
-        <h1>Copyright &COPY; NJENDVN </h1>
+        <div>DIEGO, IKER C, JOKIN, ISSAM, JULIO &#169; 2023</div>
+        <div class="social-icons">
+            <a target="_blank" href="https://github.com/Resultados-deportivos" class="fa fa-github"> </a>
+        </div>
     </footer>
 
 </body>
