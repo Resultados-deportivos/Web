@@ -11,6 +11,7 @@ app = Flask(__name__, static_url_path='/static')
  #   host="localhost"
 #)
 
+# Ruta principal (Redirecciones)
 @app.route('/es/index.html')
 def home():
     # Realizar una consulta SQL a la base de datos
@@ -26,6 +27,20 @@ def index_es():
 @app.route('/')
 def index():
     return redirect(url_for('home'))
+@app.route('/es/equipos.html')
+def page_equipos():
+    return render_template('equipos.html')
+@app.route('/es/competiciones.html')
+def page_compe():
+    return render_template('competiciones.html')
+@app.route('/es/partidos.html')
+def page_partidos():
+    return render_template('partidos.html')
+# Error Page
+@app.route('/404')
+def page_not_found():
+    return render_template('error.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
