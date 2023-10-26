@@ -58,8 +58,49 @@ a{
     margin-left: 20px;
 }
 /*----------------------------------------------------------------FOOTER----------------------------------------------------------------*/
-main{
-    display:flex
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.content {
+    padding: 20px;
+    width: 80%;
+}
+
+/* Estilos para las tarjetas (cards) */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 15px;
+}
+
+/* Estilos para encabezados en las tarjetas */
+.card h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+/* Estilos para el contenido de las tarjetas */
+.card p {
+    font-size: 16px;
+}
+
+/* Estilos para enlaces en las tarjetas */
+.card a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Estilos para enlaces al pasar el mouse sobre ellos */
+.card a:hover {
+    text-decoration: underline;
 }
 /*----------------------------------------------------------------FOOTER----------------------------------------------------------------*/
 footer {

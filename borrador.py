@@ -1,14 +1,32 @@
 import psycopg2
 from flask import Flask, render_template, redirect, url_for
+import modelos
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 
+db_connection = {
+    "database": "eusko_basket",
+    "user": "admin_basket",
+    "password": "Dinahosting2209@",
+    "host": "pgsql03.dinaserver.com",
+    "port": "5432"
+}
+
+engine = create_engine(
+    f'postgresql://{db_connection["user"]}:{db_connection["password"]}@{db_connection["host"]}:{db_connection["port"]}/{db_connection["database"]}'
+)
+
+# Crear una sesión
+Session = sessionmaker(bind=engine)
+session = Session()
 
 # Index (Redirecciones)
 @app.route('/es/index.html')
 def home():
-
-
+    jugadores = session.query(modelos.Jugador).all()
+    print(jugadores)
     return render_template('index.html' )
 
 

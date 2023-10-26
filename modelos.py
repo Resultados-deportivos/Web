@@ -3,17 +3,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
-db_connection = {
-    "database": "eusko_basket",
-    "user": "admin_basket",
-    "password": "Dinahosting2209@",
-    "host": "pgsql03.dinaserver.com",
-    "port": "5432"
-}
+engine = create_engine('postgresql://admin_basket:Dinahosting2209@@pgsql03.dinaserver.com:5432/eusko_basket')
 
-engine = create_engine(
-    f'postgresql://{db_connection["user"]}:{db_connection["password"]}@{db_connection["host"]}:{db_connection["port"]}/{db_connection["database"]}'
-)
 Base = declarative_base()
 
 
@@ -92,3 +83,9 @@ class Fechas(Base):
 
 Session = sessionmaker(bind=engine)
 session = Session()
+import psycopg2
+
+
+if __name__ == '__main__':
+    partidos = session.query(Partido).all()
+    print(partidos)
