@@ -1,5 +1,27 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-<h1>HOLA INDEX</h1>
+<div class="main-publication">
+    <div class="img">
+        <img src="/static/img/publicaciones/{{ publicaciones[0][0] }}" alt="Imagen publicacion">
+    </div>
+    <div class="description">
+        <h1>{{ publicaciones[0][1] }}</h1>
+        <p>{{ publicaciones[0][2] }}</p>
+    </div>
+</div>
+
+<div class="publication-list">
+    {% for i in publicaciones[1:] %}
+    <div class="card">
+        <div class="img">
+            <img src="/static/img/publicaciones/{{ i[0] }}" alt="Imagen publicacion">
+        </div>
+        <div class="description">
+            <h2>{{ i[1] }}</h2>
+            <p>{{ i[2] }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

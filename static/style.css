@@ -57,22 +57,17 @@ a{
     cursor: pointer;
     margin-left: 20px;
 }
-/*----------------------------------------------------------------FOOTER----------------------------------------------------------------*/
+/*----------------------------------------------------------------MAIN----------------------------------------------------------------*/
 main {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    min-width:88%;
 }
-
-.content {
-    padding: 20px;
-    width: 80%;
-}
-
-/* Estilos para las tarjetas (cards) */
-.card {
-    background-color: #ffffff;
+/* Main Publication */
+.main-publication {
+    display: flex;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -80,28 +75,54 @@ main {
     padding: 15px;
 }
 
-/* Estilos para encabezados en las tarjetas */
+.main-publication .img {
+    flex: 1;
+    padding: 10px;
+}
+
+.main-publication .img img {
+    max-width: 100%;
+}
+
+.main-publication .description {
+    flex: 2;
+}
+
+.main-publication h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.main-publication p {
+    font-size: 16px;
+}
+
+/* Publication List */
+.publication-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 15px;
+    flex: 0 0 calc(33.333% - 20px);
+}
+
 .card h2 {
     font-size: 20px;
     margin: 0;
 }
 
-/* Estilos para el contenido de las tarjetas */
 .card p {
     font-size: 16px;
 }
 
-/* Estilos para enlaces en las tarjetas */
-.card a {
-    text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
-}
-
-/* Estilos para enlaces al pasar el mouse sobre ellos */
-.card a:hover {
-    text-decoration: underline;
-}
 /*----------------------------------------------------------------FOOTER----------------------------------------------------------------*/
 footer {
   background-color: #333;
