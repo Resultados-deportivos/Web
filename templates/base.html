@@ -11,16 +11,16 @@
 <body>
     <header>
         <div class="icon">
-            <a href="index.html">
+            <a href="/es/inicio">
                 <img src="/static/img/icon.png" alt="icon" >
             </a>
         </div>
         <div class="nav">
             <nav>
                 <ul>
-                    <li><a href="/es/partidos.html">Partidos</a></li>
-                    <li><a href="/es/competiciones.html">Competiciones</a></li>
-                    <li><a href="/es/equipos.html">Equipos</a></li>
+                    <li><a href="/es/partidos">Partidos</a></li>
+                    <li><a href="/es/competiciones">Competiciones</a></li>
+                    <li><a href="/es/equipos">Equipos</a></li>
                 </ul>
             </nav>
         </div>
@@ -32,9 +32,16 @@
             <div></div>
         </div>
         <div class="register">
-            <button>INICIAR SESIÓN</button>
-            <button>ÚNETE</button>
+            <button id="inicio-sesion" onclick="abrir_login()">INICIAR SESIÓN</button>
+            <button id="unete" onclick="abrir_login()">ÚNETE</button>
         </div>
+        <script>
+        // Remember: Try to work this on script.js
+        function abrir_login() {
+            // Redirect to the '/es/login' route
+            window.location.href = '/es/login';
+        }
+</script>
     </header>
     <main>
         <div class="content">
