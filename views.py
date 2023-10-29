@@ -71,6 +71,13 @@ def page_sign_up(environ, start_response):
     return [response]
 
 
+def parse_post_data(environ):
+    from urllib.parse import parse_qs
+    data = environ['wsgi.input'].read(int(environ.get('CONTENT_LENGTH', 0))).decode('utf-8')
+    form_data = parse_qs(data)
+    return form_data
+
+
 def page_admin(environ, start_response):
     users = {
         'usuario1': 'contrasena1',
@@ -81,9 +88,19 @@ def page_admin(environ, start_response):
     response = admin.render().encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
-
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        email = form_data.get('email')
+        password = form_data.get('password')
+        print(email, password)
     start_response(status, response_headers)
     return [response]
+
+
+def redirect_inicio(environ, start_response):
+    response_headers = [('Location', '/es/inicio')]
+    start_response('302 Found', response_headers)
+    return []
 
 
 def serve_static(environ, start_response, path):
@@ -144,9 +161,6 @@ def serve_static_js(environ, start_response, path):
     response_headers = [('Content-type', content_type)]
     start_response(status, response_headers)
     return [response_body]
-
-
-
 
 
 def handle_404(environ, start_response):

@@ -1,4 +1,5 @@
 import psycopg2
+import requests
 
 # Database connection parameters
 db_connection = {
@@ -60,7 +61,40 @@ for row in cur2.fetchall():
 cur.close()
 cur2.close()
 conn.close()
+
+
+def get_weather_data():
+    # Define the API endpoint URL
+    api_url = "https://api.open-meteo.com/v1/forecast"
+    YOUR_LONGITUDE = -2.5
+    YOUR_LATITUDE = 43.0
+
+    # Define the parameters you want to include in the request
+    params = {
+        "hourly": ["temperature_2m", "relativehumidity_2m", "dewpoint_2m", "rain"],
+        "latitude": YOUR_LATITUDE,  # Replace with the actual latitude
+        "longitude": YOUR_LONGITUDE,  # Replace with the actual longitude
+    }
+
+    try:
+        # Send a GET request to the API
+        response = requests.get(api_url, params=params)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Parse the JSON response
+            weather_data = response.json()
+
+            return weather_data
+        else:
+            print(f"API request failed with status code: {response.status_code}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+    return None
+
 if __name__ == '__main__':
+    print(get_weather_data())
     # Print the results
     for publicacion in results:
         print(

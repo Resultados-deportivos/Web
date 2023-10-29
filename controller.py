@@ -6,6 +6,9 @@ from views import *
 
 def app(environ, start_response):
     path = environ.get('PATH_INFO')
+    # Redirección a /es/inicio si no hay nada en la ruta
+    if path == '/':
+        return redirect_inicio(environ, start_response)
     # Inicio
     if path == '/es/inicio':
         return page_index(environ, start_response)
@@ -29,15 +32,12 @@ def app(environ, start_response):
         return page_admin(environ, start_response)
     # Load CSS
     elif path == '/static/style.css':
-        # Serve the "style.css" file from the static folder
         return serve_static(environ, start_response, path)
     # Load Folder /static/Img
     elif path.startswith('/static/img/'):
-        # Serve images from the "img" subfolder in the static directory
         return serve_static_img(environ, start_response, path)
     # Load JS Do not work
     elif path.startswith('/static/script.js'):
-        # Serve images from the "img" subfolder in the static directory
         return serve_static_js(environ, start_response, path)
     # Do not found
     else:
