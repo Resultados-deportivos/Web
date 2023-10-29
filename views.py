@@ -9,7 +9,8 @@ competiciones = env.get_template('competiciones.html')
 equipos = env.get_template('equipos.html')
 partidos = env.get_template('partidos.html')
 error = env.get_template('error.html')
-login = env.get_template('login.html')
+sign_in = env.get_template('sign-in.html')
+sign_up = env.get_template('sign-in.html')
 
 
 def page_index(environ, start_response):
@@ -53,13 +54,19 @@ def page_partidos(environ, start_response):
     return [response]
 
 
-def page_login(environ, start_response):
-    response = login.render().encode('utf-8')
+def page_sign_in(environ, start_response):
+    response = sign_in.render().encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     return [response]
 
+def page_sign_up(environ, start_response):
+    response = sign_up.render().encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    return [response]
 
 def serve_static(environ, start_response, path):
     # Set the appropriate content type for CSS

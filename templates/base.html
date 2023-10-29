@@ -32,14 +32,16 @@
             <div></div>
         </div>
         <div class="register">
-            <button id="inicio-sesion" onclick="abrir_login()">INICIAR SESIÓN</button>
-            <button id="unete" onclick="abrir_login()">ÚNETE</button>
+            <button id="inicio-sesion" onclick="sign_in()">INICIAR SESIÓN</button>
+            <button id="unete" onclick="sign_up()">ÚNETE</button>
         </div>
         <script>
         // Remember: Try to work this on script.js
-        function abrir_login() {
-            // Redirect to the '/es/login' route
-            window.location.href = '/es/login';
+        function sign_in() {
+            window.location.href = '/es/sign-in';
+        }
+        function sign_up() {
+            window.location.href = '/es/sign-up';
         }
 </script>
     </header>

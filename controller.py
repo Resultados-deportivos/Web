@@ -1,6 +1,6 @@
 from wsgiref.simple_server import make_server
 import views
-from views import page_index, page_equipos, page_competiciones, page_partidos, page_login, serve_static, serve_static_img, serve_static_js
+from views import page_index, page_equipos, page_competiciones, page_partidos, page_sign_in, page_sign_up, serve_static, serve_static_img, serve_static_js
 
 
 def app(environ, start_response):
@@ -18,9 +18,9 @@ def app(environ, start_response):
     elif path == '/es/partidos':
         return page_partidos(environ, start_response)
     elif path == '/es/sign-in':
-        return page_login(environ, start_response)
+        return page_sign_in(environ, start_response)
     elif path == '/es/sign-up':
-        return page_login(environ, start_response)
+        return page_sign_up(environ, start_response)
     # Load CSS
     elif path == '/static/style.css':
         # Serve the "style.css" file from the static folder
