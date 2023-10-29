@@ -20,6 +20,7 @@ conn = psycopg2.connect(
 
 # Create a cursor
 cur = conn.cursor()
+cur2 = conn.cursor()
 
 # Define a class to represent Publicacion objects
 class Publicacion:
@@ -29,20 +30,41 @@ class Publicacion:
         self.titulo = titulo
         self.descripcion = descripcion
 
+class Usuario:
+    def __init__(self, id, nombre, contrasena, correo, admin):
+        self.id = id
+        self.nombre = nombre
+        self.contrasena = contrasena
+        self.correo = correo
+        self.admin = admin
+
+
 # Execute a SQL query to fetch Publicacion records
 cur.execute("SELECT * FROM publicaciones")
+cur2.execute("SELECT * FROM usuarios")
 
 # Fetch all results and map them to Publicacion objects
 results = []
 for row in cur.fetchall():
-    id, img, titulo, descripcion = row
+    Id, img, titulo, descripcion = row
     publicacion = Publicacion(id, img, titulo, descripcion)
     results.append(publicacion)
 
+results_users = []
+for row in cur2.fetchall():
+    Id, nombre, correo, contrasena, admin = row
+    users = Usuario(id, nombre, correo, contrasena, admin)
+    results_users.append(users)
+
 # Close the cursor and connection
 cur.close()
+cur2.close()
 conn.close()
-
-# Print the results
-for publicacion in results:
-    print(f"ID: {publicacion.id}, Img: {publicacion.img}, Titulo: {publicacion.titulo}, Descripcion: {publicacion.descripcion}")
+if __name__ == '__main__':
+    # Print the results
+    for publicacion in results:
+        print(
+            f"ID: {publicacion.id}, Img: {publicacion.img}, Titulo: {publicacion.titulo}, Descripcion: {publicacion.descripcion}")
+    for users in results_users:
+        print(
+            f"ID: {users.id}, Nombre: {users.nombre}, Correo: {users.correo}, Contrasena: {users.contrasena}, Admin: {users.admin}")

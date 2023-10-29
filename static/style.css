@@ -68,7 +68,7 @@ main {
 .content{
     width: 88%;
 }
-/* Main Publication */
+/*------------------------------------------------------------------------INICIO-----------------------------------------------------------------------------------*/
 .main-publication {
     display: flex;
     justify-content: center;
@@ -127,14 +127,14 @@ main {
     font-size: 16px;
 }
 
-/* Login */
+/*---------------------------------------------------------LOGIN----------------------------------------------------------------------*/
 .login-container {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 300px;
+    width: 80%xº;
     text-align: center;
 }
 

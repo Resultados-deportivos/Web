@@ -2,15 +2,16 @@ from jinja2 import Environment, FileSystemLoader
 import os
 
 env = Environment(loader=FileSystemLoader('templates'))
-#env2 = Environment(loader=FileSystemLoader('static'))
-#env3 = Environment(loader=FileSystemLoader('static/img'))
+# env2 = Environment(loader=FileSystemLoader('static'))
+# env3 = Environment(loader=FileSystemLoader('static/img'))
 index = env.get_template('index.html')
 competiciones = env.get_template('competiciones.html')
 equipos = env.get_template('equipos.html')
 partidos = env.get_template('partidos.html')
 error = env.get_template('error.html')
 sign_in = env.get_template('sign-in.html')
-sign_up = env.get_template('sign-in.html')
+sign_up = env.get_template('sign-up.html')
+admin = env.get_template('admin.html')
 
 
 def page_index(environ, start_response):
@@ -61,12 +62,29 @@ def page_sign_in(environ, start_response):
     start_response(status, response_headers)
     return [response]
 
+
 def page_sign_up(environ, start_response):
     response = sign_up.render().encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     return [response]
+
+
+def page_admin(environ, start_response):
+    users = {
+        'usuario1': 'contrasena1',
+        'usuario2': 'contrasena2',
+        'usuario3': 'contrasena3',
+    }
+
+    response = admin.render().encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+
+    start_response(status, response_headers)
+    return [response]
+
 
 def serve_static(environ, start_response, path):
     # Set the appropriate content type for CSS
@@ -126,6 +144,9 @@ def serve_static_js(environ, start_response, path):
     response_headers = [('Content-type', content_type)]
     start_response(status, response_headers)
     return [response_body]
+
+
+
 
 
 def handle_404(environ, start_response):
