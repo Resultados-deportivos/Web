@@ -2,8 +2,6 @@ from jinja2 import Environment, FileSystemLoader
 import os
 
 env = Environment(loader=FileSystemLoader('templates'))
-# env2 = Environment(loader=FileSystemLoader('static'))
-# env3 = Environment(loader=FileSystemLoader('static/img'))
 index = env.get_template('index.html')
 competiciones = env.get_template('competiciones.html')
 equipos = env.get_template('equipos.html')
@@ -59,6 +57,11 @@ def page_sign_in(environ, start_response):
     response = sign_in.render().encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        email = form_data.get('email')
+        password = form_data.get('password')
+        print(email, password)
     start_response(status, response_headers)
     return [response]
 
@@ -67,15 +70,13 @@ def page_sign_up(environ, start_response):
     response = sign_up.render().encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        email = form_data.get('email')
+        password = form_data.get('password')
+        print(email, password)
     start_response(status, response_headers)
     return [response]
-
-
-def parse_post_data(environ):
-    from urllib.parse import parse_qs
-    data = environ['wsgi.input'].read(int(environ.get('CONTENT_LENGTH', 0))).decode('utf-8')
-    form_data = parse_qs(data)
-    return form_data
 
 
 def page_admin(environ, start_response):
@@ -101,6 +102,13 @@ def redirect_inicio(environ, start_response):
     response_headers = [('Location', '/es/inicio')]
     start_response('302 Found', response_headers)
     return []
+
+
+def parse_post_data(environ):
+    from urllib.parse import parse_qs
+    data = environ['wsgi.input'].read(int(environ.get('CONTENT_LENGTH', 0))).decode('utf-8')
+    form_data = parse_qs(data)
+    return form_data
 
 
 def serve_static(environ, start_response, path):

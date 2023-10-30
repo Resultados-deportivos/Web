@@ -98,7 +98,7 @@ if __name__ == '__main__':
     # Print the results
     for publicacion in results:
         print(
-            f"ID: {publicacion.id}, Img: {publicacion.img}, Titulo: {publicacion.titulo}, Descripcion: {publicacion.descripcion}")
+            f"ID: {publicacion.id}, Img:     {publicacion.img}, Titulo: {publicacion.titulo}, Descripcion: {publicacion.descripcion}")
     for users in results_users:
         print(
             f"ID: {users.id}, Nombre: {users.nombre}, Correo: {users.correo}, Contrasena: {users.contrasena}, Admin: {users.admin}")
