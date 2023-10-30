@@ -33,6 +33,11 @@ def app(environ, start_response):
     # Load CSS
     elif path == '/static/style.css':
         return serve_static(environ, start_response, path)
+    # Load CSS
+    elif path == '/static/inicio.css':
+        return serve_static(environ, start_response, path)
+    elif path == '/static/login.css':
+        return serve_static(environ, start_response, path)
     # Load Folder /static/Img
     elif path.startswith('/static/img/'):
         return serve_static_img(environ, start_response, path)

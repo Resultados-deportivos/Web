@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-    <h1>HOLA COMPETICIONES!!!</h1>
+<h1>Próximos Partidos</h1>
+    <ul class="event-list">
+        {% for partido in events %}
+        <li class="match">
+            <h2>Partido: {{ partido.nombre }}</h2>
+            <p>Fecha: {{ partido.fecha }}</p>
+            <p>Hora de Inicio: {{ partido.horainicio }}</p>
+            <p>Hora de Finalización: {{ partido.horafin }}</p>
+            <p>Temporada: {{ partido.temporada }}</p>
+            <p>Estadio: {{ partido.idestadios }}</p>
+            <p>Liga: {{ partido.idliga }}</p>
+        </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

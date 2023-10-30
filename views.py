@@ -1,5 +1,6 @@
 from jinja2 import Environment, FileSystemLoader
 import os
+from models import *
 
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
@@ -22,7 +23,7 @@ def page_index(environ, start_response):
         ('img5.jpg', 'Increíble jugada de baloncesto', 'Una jugada asombrosa que dejó a todos sorprendidos.')
     ]
 
-    response = index.render(publicaciones=publicaciones).encode('utf-8')
+    response = index.render(publicaciones=publicaciones, css_name='inicio.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -30,7 +31,8 @@ def page_index(environ, start_response):
 
 
 def page_competiciones(environ, start_response):
-    response = competiciones.render().encode('utf-8')
+    events = get_events()
+    response = competiciones.render(events=events, css_name='inicio.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -54,7 +56,7 @@ def page_partidos(environ, start_response):
 
 
 def page_sign_in(environ, start_response):
-    response = sign_in.render().encode('utf-8')
+    response = sign_in.render(css_name='login.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':
@@ -67,7 +69,7 @@ def page_sign_in(environ, start_response):
 
 
 def page_sign_up(environ, start_response):
-    response = sign_up.render().encode('utf-8')
+    response = sign_up.render(css_name='login.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':

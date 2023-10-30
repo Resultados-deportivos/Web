@@ -1,7 +1,8 @@
-
-function abrir_login() {
-    // Redirect to the '/es/login' route
-    window.location.href = '/es/login';
+// Remember: Try to work this on script.js
+function sign_in() {
+    window.location.href = '/es/sign-in';
 }
-
+function sign_up() {
+    window.location.href = '/es/sign-up';
+}
 

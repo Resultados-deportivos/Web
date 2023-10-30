@@ -23,6 +23,7 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 cur2 = conn.cursor()
 
+
 # Define a class to represent Publicacion objects
 class Publicacion:
     def __init__(self, id, img, titulo, descripcion):
@@ -30,6 +31,7 @@ class Publicacion:
         self.img = img
         self.titulo = titulo
         self.descripcion = descripcion
+
 
 class Usuario:
     def __init__(self, id, nombre, contrasena, correo, admin):
@@ -63,22 +65,13 @@ cur2.close()
 conn.close()
 
 
-def get_weather_data():
+def get_events():
     # Define the API endpoint URL
-    api_url = "https://api.open-meteo.com/v1/forecast"
-    YOUR_LONGITUDE = -2.5
-    YOUR_LATITUDE = 43.0
-
-    # Define the parameters you want to include in the request
-    params = {
-        "hourly": ["temperature_2m", "relativehumidity_2m", "dewpoint_2m", "rain"],
-        "latitude": YOUR_LATITUDE,  # Replace with the actual latitude
-        "longitude": YOUR_LONGITUDE,  # Replace with the actual longitude
-    }
+    api_url = "http://localhost:8080/basket/events"
 
     try:
         # Send a GET request to the API
-        response = requests.get(api_url, params=params)
+        response = requests.get(api_url)
 
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
@@ -93,12 +86,15 @@ def get_weather_data():
 
     return None
 
+
 if __name__ == '__main__':
-    print(get_weather_data())
+    print(get_events())
     # Print the results
+    '''
     for publicacion in results:
         print(
-            f"ID: {publicacion.id}, Img:     {publicacion.img}, Titulo: {publicacion.titulo}, Descripcion: {publicacion.descripcion}")
+            f"ID: {publicacion.id}, Img:{publicacion.img}, Titulo: {publicacion.titulo}, Descripcion: {publicacion.descripcion}")
     for users in results_users:
         print(
             f"ID: {users.id}, Nombre: {users.nombre}, Correo: {users.correo}, Contrasena: {users.contrasena}, Admin: {users.admin}")
+    '''
