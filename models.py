@@ -67,7 +67,7 @@ conn.close()
 
 def get_events():
     # Define the API endpoint URL
-    api_url = "http://localhost:8080/basket/events"
+    api_url = "http://localhost:8000/basket/events"
 
     try:
         # Send a GET request to the API
