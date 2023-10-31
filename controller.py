@@ -38,6 +38,8 @@ def app(environ, start_response):
         return serve_static(environ, start_response, path)
     elif path == '/static/login.css':
         return serve_static(environ, start_response, path)
+    elif path == '/static/competiciones.css':
+        return serve_static(environ, start_response, path)
     # Load Folder /static/Img
     elif path.startswith('/static/img/'):
         return serve_static_img(environ, start_response, path)

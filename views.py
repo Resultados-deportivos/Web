@@ -32,7 +32,7 @@ def page_index(environ, start_response):
 
 def page_competiciones(environ, start_response):
     events = get_events()
-    response = competiciones.render(events=events, css_name='inicio.css').encode('utf-8')
+    response = competiciones.render(events=events, css_name='competiciones.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -88,7 +88,7 @@ def page_admin(environ, start_response):
         'usuario3': 'contrasena3',
     }
 
-    response = admin.render().encode('utf-8')
+    response = admin.render(css_name='login.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':

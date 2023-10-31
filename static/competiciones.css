@@ -1,0 +1,36 @@
+/* FILEPATH: /C:/Users/j.azurduy/Desktop/web/static/competiciones.css */
+
+/* Style for main heading */
+h1 {
+    font-size: 2em;
+    text-align: center;
+    margin: 1em 0;
+    color:black ;
+}
+
+/* Style for event list */
+.event-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Style for each match */
+.match {
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin: 1em 0;
+}
+
+/* Style for match headings */
+.match h2 {
+    font-size: 1.5em;
+    margin: 0;
+    color:black ;
+}
+
+/* Style for match details */
+.match p {
+    margin: 0.5em 0;
+    color:black ;
+}

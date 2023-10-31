@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-<h1>Próximos Partidos</h1>
-    <ul class="event-list">
+<ul class="event-list">
+    <h1>Próximos Partidos</h1>
+    
         {% for partido in events %}
         <li class="match">
             <h2>Partido: {{ partido.nombre }}</h2>
@@ -14,5 +15,5 @@
             <p>Liga: {{ partido.idliga }}</p>
         </li>
         {% endfor %}
-    </ul>
+</ul>
 {% endblock %}
