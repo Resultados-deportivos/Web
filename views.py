@@ -6,7 +6,7 @@ env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
 competiciones = env.get_template('competiciones.html')
 equipos = env.get_template('equipos.html')
-partidos = env.get_template('partidos.html')
+partidos = env.get_template('eventos.html')
 error = env.get_template('error.html')
 sign_in = env.get_template('sign-in.html')
 sign_up = env.get_template('sign-up.html')
@@ -31,8 +31,8 @@ def page_index(environ, start_response):
 
 
 def page_competiciones(environ, start_response):
-    events = get_events()
-    response = competiciones.render(events=events).encode('utf-8')
+    competiciones_list = get_leagues()
+    response = competiciones.render(competiciones_list=competiciones_list, css_name='competiciones.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -40,7 +40,8 @@ def page_competiciones(environ, start_response):
 
 
 def page_equipos(environ, start_response):
-    response = equipos.render().encode('utf-8')
+    equipos_list = get_teams()
+    response = equipos.render(equipos_list=equipos_list, css_name='equipos.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -83,20 +84,29 @@ def page_sign_up(environ, start_response):
 
 
 def page_admin(environ, start_response):
-    users = {
-        'usuario1': 'contrasena1',
-        'usuario2': 'contrasena2',
-        'usuario3': 'contrasena3',
-    }
+    usuarios = get_users(admin=True)
+    print(usuarios)
+    admin_user = None
 
-    response = admin.render(css_name='login.css').encode('utf-8')
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':
         form_data = parse_post_data(environ)
         email = form_data.get('email')
         password = form_data.get('password')
-        print(email, password)
+
+        # Buscar el usuario en la lista de usuarios con "admin" True
+        admin_user = next(
+            (user for user in usuarios if user['correo'] == email and user['contrasena'] == password and user['admin']),
+            True)
+
+    if admin_user:
+        # Usuario administrador encontrado, redirigir a la página de inicio
+        response_headers = [('Location', '/es/inicio')]
+        status = '302 Found'
+        start_response(status, response_headers)
+        return []
+    response = admin.render(css_name='login.css', message="No se encontro").encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     return [response]
 

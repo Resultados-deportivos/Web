@@ -1,6 +1,4 @@
 from wsgiref.simple_server import make_server
-import views
-#from views import page_index, page_equipos, page_competiciones, page_partidos, page_sign_in, page_sign_up, serve_static, serve_static_img, serve_static_js
 from views import *
 
 
@@ -40,6 +38,8 @@ def app(environ, start_response):
         return serve_static(environ, start_response, path)
     elif path == '/static/eventos.css':
         return serve_static(environ, start_response, path)
+    elif path == '/static/competiciones.css':
+        return serve_static(environ, start_response, path)
     # Load Folder /static/Img
     elif path.startswith('/static/img/'):
         return serve_static_img(environ, start_response, path)
@@ -48,7 +48,7 @@ def app(environ, start_response):
         return serve_static_js(environ, start_response, path)
     # Do not found
     else:
-        return views.handle_404(environ, start_response)
+        return handle_404(environ, start_response)
 
 
 if __name__ == "__main__":

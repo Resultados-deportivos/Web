@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-    <h1>HOLA EQUIPOS!!!</h1>
+    {% for equipos in equipos_list %}
+    <h1>{{ equipos.nombre }}</h1>
+    <h1>{{ equipos.ciudad }}</h1>
+    <h1>{{ equipos.logo }}</h1>
+    <h1>{{ equipos.id_liga }}</h1>
+    {% endfor %}
 {% endblock %}

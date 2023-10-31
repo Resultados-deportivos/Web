@@ -2,15 +2,15 @@
 
 {% block maincontent %}
 <h1>Próximos Partidos</h1>
-{% for partido in events %}
+
+{% for competiciones in competiciones_list %}
 <div class="evetns-list">
-    <h1>Fecha: {{ partido.fecha }}</h2>
+    <h1>{{ competiciones.nombre }} </h2>
+        <img src="/static/img/leagues_logo/{{ competiciones.logo }}" alt="" srcset="">
     <div class="card">
-        <h2>{{ partido.nombre }}</h2>
-        <p>Hora:{{ partido.horainicio }}-{{ partido.horafin }}</p>
-        <p>Temporada: {{ partido.temporada }}</p>
-        <p>Estadio: {{ partido.idestadios }}</p>
-        <p>Liga: {{ partido.idliga }}</p>
+        <h2>{{ competiciones.temporadaactual }}</h2>
+        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }} YT</a></p>
+        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">{{ competiciones.nombre }} web</a></p>
     </div>
         
 </div>
