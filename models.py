@@ -86,6 +86,27 @@ def get_events():
 
     return None
 
+def get_equipos():
+    # Define the API endpoint URL
+    api_url = "http://localhost:8080/basket/temas"
+
+    try:
+        # Send a GET request to the API
+        response = requests.get(api_url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Parse the JSON response
+            weather_data = response.json()
+
+            return weather_data
+        else:
+            print(f"API request failed with status code: {response.status_code}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+    return None
+
 
 if __name__ == '__main__':
     print(get_events())
