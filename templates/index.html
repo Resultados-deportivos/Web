@@ -9,8 +9,18 @@
     <div class="description">
         <h1>{{ publicaciones[0][1] }}</h1>
         <p>{{ publicaciones[0][2] }}</p>
-        <button class="like-button" id="like-button-0">Like</button>
-        <button class="unlike-button" id="unlike-button-0">Unlike</button>
+        <button class="like" id="like-button-0">
+            <span class="material-symbols-outlined">thumb_up</span>
+        </button>
+        <button class="unlike" id="unlike-button-0">
+            <span class="material-symbols-outlined">thumb_down</span>
+        </button>
+        <div class="comments">
+            <input type="text" placeholder="Escribe un comentario">
+            <button class="comment" >
+                <span class="material-symbols-outlined">send</span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -23,8 +33,18 @@
         <div class="description">
             <h2>{{ i[1] }}</h2>
             <p>{{ i[2] }}</p>
-            <button class="like-button" id="like-button-{{ loop.index }}">Like</button>
-            <button class="unlike-button" id="unlike-button-{{ loop.index }}">Unlike</button>
+            <button class="like" id="like-button-0">
+            <span class="material-symbols-outlined">thumb_up</span>
+        </button>
+        <button class="unlike" id="unlike-button-0">
+            <span class="material-symbols-outlined">thumb_down</span>
+        </button>
+        <div class="comments">
+            <input type="text" placeholder="Escribe un comentario">
+            <button class="comment" >
+                <span class="material-symbols-outlined">send</span>
+            </button>
+        </div>
         </div>
     </div>
     {% endfor %}

@@ -1,19 +1,18 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-<ul class="event-list">
-    <h1>Próximos Partidos</h1>
-    
-        {% for partido in events %}
-        <li class="match">
-            <h2>Partido: {{ partido.nombre }}</h2>
-            <p>Fecha: {{ partido.fecha }}</p>
-            <p>Hora de Inicio: {{ partido.horainicio }}</p>
-            <p>Hora de Finalización: {{ partido.horafin }}</p>
-            <p>Temporada: {{ partido.temporada }}</p>
-            <p>Estadio: {{ partido.idestadios }}</p>
-            <p>Liga: {{ partido.idliga }}</p>
-        </li>
-        {% endfor %}
-</ul>
+<h1>Próximos Partidos</h1>
+{% for partido in events %}
+<div class="evetns-list">
+    <h1>Fecha: {{ partido.fecha }}</h2>
+    <div class="card">
+        <h2>{{ partido.nombre }}</h2>
+        <p>Hora:{{ partido.horainicio }}-{{ partido.horafin }}</p>
+        <p>Temporada: {{ partido.temporada }}</p>
+        <p>Estadio: {{ partido.idestadios }}</p>
+        <p>Liga: {{ partido.idliga }}</p>
+    </div>
+        
+</div>
+{% endfor %}
 {% endblock %}

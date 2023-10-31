@@ -56,3 +56,43 @@
 .card p {
     font-size: 16px;
 }
+
+/* Estilo para los botones de Like y Dislike */
+.like {
+    border: none;
+    background-color: #fd7600df; 
+    color: #fff; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    margin-right: 10px;
+}
+.unlike{
+    border: none;
+    background-color: #fd5151; 
+    color: #fff; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    margin-right: 10px;
+}
+.comments{
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+    align-items: space-between;
+    height: 25px;
+}
+.comment{
+    border: none;
+    background-color: #fd7600df; 
+    color: #fff; 
+    border-radius: 4px; 
+    cursor: pointer;
+    margin-left: 5px; 
+
+}
+/* Estilo para los iconos dentro de los botones */
+.like span,
+.unlike span,
+.comment span {
+    margin-right: 4px; /* Espacio entre el ícono y el texto */
+}

@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-    <div class="match">
-            <h2>Partido: Astronautas vs. Zarpas</h2>
-            <p>Fecha: 1 de Noviembre de 2023</p>
-            <p>Hora de Inicio: 18:00</p>
-            <p>Hora de Finalización: 20:00</p>
-            <p>Temporada: 2023</p>
-            <p>Estadio: Nombre del Estadio</p>
-            <p>Liga: Nombre de la Liga</p>
-        </div>
-
+<h1>Próximos Partidos</h1>
+{% for partido in events %}
+<div class="evetns-list">
+    <h2>Fecha: {{ partido.fecha }}</h2>
+    <div class="card">
+        <h2>{{ partido.nombre }}</h2>
+        <p>Hora:{{ partido.horainicio }}-{{ partido.horafin }}</p>
+        <p>Temporada: {{ partido.temporada }}</p>
+        <p>Estadio: {{ partido.idestadios }}</p>
+        <p>Liga: {{ partido.idliga }}</p>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

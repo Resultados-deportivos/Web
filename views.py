@@ -32,7 +32,7 @@ def page_index(environ, start_response):
 
 def page_competiciones(environ, start_response):
     events = get_events()
-    response = competiciones.render(events=events, css_name='competiciones.css').encode('utf-8')
+    response = competiciones.render(events=events).encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -48,7 +48,8 @@ def page_equipos(environ, start_response):
 
 
 def page_partidos(environ, start_response):
-    response = partidos.render().encode('utf-8')
+    events = get_events()
+    response = partidos.render(events=events, css_name='eventos.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
