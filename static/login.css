@@ -1,4 +1,4 @@
-.login-container {
+#login-form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,7 +11,31 @@
     margin: 0 auto;
     text-align: center;
 }
+.sing-up-container {
+    display: flex;
+    flex-direction: row;
+}
+.inputs-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
 
+.rep-password{
+    text-align:left;
+    width:300px;
+}
+.user-correo{
+
+    margin-right: 100px;
+    width:300px;
+    text-align:left;
+}
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
@@ -50,12 +74,32 @@ form button:hover {
     color: black ;
 }
 
-p {
-    font-size: 14px;
-    margin-top: 10px;
-}
-
 .login-container a {
     text-decoration: none;
     color: #007bff;
+}
+.user-correo, .rep-password {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+p {
+    margin-top: 10px;
+}
+
+p a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+
+p a:hover {
+    text-decoration: underline;
 }

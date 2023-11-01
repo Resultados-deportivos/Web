@@ -1,6 +1,6 @@
 from jinja2 import Environment, FileSystemLoader
-import os
 from models import *
+from flash_messages import *
 
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
@@ -11,6 +11,7 @@ error = env.get_template('error.html')
 sign_in = env.get_template('sign-in.html')
 sign_up = env.get_template('sign-up.html')
 admin = env.get_template('admin.html')
+crud = env.get_template('crud.html')
 
 
 def page_index(environ, start_response):
@@ -81,11 +82,35 @@ def page_sign_up(environ, start_response):
         print(email, password)
     start_response(status, response_headers)
     return [response]
-
-
 def page_admin(environ, start_response):
     usuarios = get_users(admin=True)
-    print(usuarios)
+    admin_user = None
+
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        email = form_data.get('email')
+        password = form_data.get('password')
+
+        admin_user = next(
+            (user for user in usuarios if user['correo'] == email and user['contrasena'] == password and user['admin']),
+            True)
+
+    if admin_user:
+        add_flash_message('Bienvenido', 'success')  # Add a flash message
+        response_headers = [('Location', '/es/admin/crud/')]
+        status = '302 Found'
+        start_response(status, response_headers)
+        return []
+
+    flash_messages = get_flash_messages()  # Retrieve flash messages
+    response = admin.render(css_name='login.css', flash_messages=flash_messages, message="No se encontró").encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    return [response]
+'''
+def page_admin(environ, start_response):
+    usuarios = get_users(admin=True)
     admin_user = None
 
     if environ['REQUEST_METHOD'] == 'POST':
@@ -99,12 +124,21 @@ def page_admin(environ, start_response):
             True)
 
     if admin_user:
-        # Usuario administrador encontrado, redirigir a la página de inicio
-        response_headers = [('Location', '/es/inicio')]
+
+        response_headers = [('Location', '/es/admin/crud/')]
         status = '302 Found'
         start_response(status, response_headers)
         return []
-    response = admin.render(css_name='login.css', message="No se encontro").encode('utf-8')
+
+    response = admin.render(css_name='login.css', message="No se encontró").encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    return [response]
+
+'''
+def page_crud(environ, start_response):
+    response = crud.render().encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)

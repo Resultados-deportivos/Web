@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
+<!-- In your template (home.html or any other template): -->
+{% for message, category in flash_messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+{% endfor %}
+
 <div class="login-container">
     <h1>Hola.</h1>
     <h2>Nos alegra volver a verte por aquí</h2>

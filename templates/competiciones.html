@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-<h1>Próximos Partidos</h1>
+<h1>Ligas:</h1>
 
 {% for competiciones in competiciones_list %}
-<div class="evetns-list">
+<div class="events-list">
     <h1>{{ competiciones.nombre }} </h2>
-        <img src="/static/img/leagues_logo/{{ competiciones.logo }}" alt="" srcset="">
+        <img src="/static/img/leagues_logo/{{ competiciones.logo }}.png" alt="Logo {{ competiciones.nombre }}">
     <div class="card">
         <h2>{{ competiciones.temporadaactual }}</h2>
-        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }} YT</a></p>
-        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">{{ competiciones.nombre }} web</a></p>
+        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }} </a>
+        <span class="material-symbols-outlined">youtube_activity</span>
+        </p>
+        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }}</a>
+            <span class="material-symbols-outlined">public</span>
+        </p>
     </div>
         
 </div>
