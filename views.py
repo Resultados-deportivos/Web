@@ -1,6 +1,8 @@
 from jinja2 import Environment, FileSystemLoader
 from models import *
 from flash_messages import *
+import os
+from http.cookies import SimpleCookie
 
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
@@ -13,12 +15,15 @@ sign_up = env.get_template('sign-up.html')
 admin = env.get_template('admin.html')
 crud = env.get_template('crud.html')
 
+active_sessions = {}
+def start_session():
+    session_id = os.urandom(16).hex()
+    return session_id
+
 
 def page_index(environ, start_response):
     publicaciones = get_posts()
     comments_list = get_comments()
-    print(comments_list)
-    print(publicaciones)
     response = index.render(publicaciones=publicaciones, comments_list=comments_list, css_name='inicio.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
@@ -54,14 +59,29 @@ def page_partidos(environ, start_response):
 
 
 def page_sign_in(environ, start_response):
+    usuarios_list = get_users(admin=False)
+    print(usuarios_list)
     response = sign_in.render(css_name='login.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
+
     if environ['REQUEST_METHOD'] == 'POST':
         form_data = parse_post_data(environ)
         email = form_data.get('email')
         password = form_data.get('password')
         print(email, password)
+
+        for user in usuarios_list:
+            if user['correo'] == email and user['contrasena'] == password:
+                session_id = start_session()
+                active_sessions[session_id] = user  # Store user information in the active sessions
+                cookie = SimpleCookie()
+                cookie["session_id"] = session_id
+                start_response('302 Found', [('Location', '/es/inicio')])
+                return []
+            else:
+                print("No se encontró el usuario")
+
     start_response(status, response_headers)
     return [response]
 
@@ -72,11 +92,15 @@ def page_sign_up(environ, start_response):
     response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':
         form_data = parse_post_data(environ)
+        user = form_data.get('usuario')
         email = form_data.get('email')
         password = form_data.get('password')
+        re_password= form_data.get('re-password')
         print(email, password)
     start_response(status, response_headers)
     return [response]
+
+
 def page_admin(environ, start_response):
     usuarios = get_users(admin=True)
     admin_user = None

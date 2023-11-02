@@ -36,6 +36,18 @@
             <button id="inicio-sesion" onclick="sign_in()">INICIAR SESIÓN</button>
             <button id="unete" onclick="sign_up()">ÚNETE</button>
         </div>
+
+        {% if user %}
+<div>
+    <p>Nombre: {{ user.nombre }}</p>
+    <p>Correo: {{ user.correo }}</p>
+    <!-- Add more user information here as needed -->
+</div>
+<div>
+    <!-- Display a greeting using the user's name -->
+    <p>Hello {{ user.name }}</p>
+</div>
+{% endif %}
     </header>
     <main>
         <div class="content">

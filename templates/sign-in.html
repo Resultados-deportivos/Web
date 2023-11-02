@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
+{% if user %}
+        <h1>Hello {{ user.name }}</h1>
+    {% else %}
 <div class="login-container">
     <h1>Registrarse</h1>
     <form id="login-form" method="POST">
@@ -17,5 +20,6 @@
         <button type="submit">Iniciar Sesión</button>
     </form>
     <p>¿Todavía no tienes una cuenta? <a href="/es/sign-up">Regístrate</a></p>
+    {% endif %}
 </div>
 {% endblock %}
