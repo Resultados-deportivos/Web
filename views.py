@@ -15,15 +15,7 @@ crud = env.get_template('crud.html')
 
 
 def page_index(environ, start_response):
-    publicaciones = [
-        ('img1.jpg', 'Mate espectacular de Michael Jordan', 'Reviviendo uno de los míticos mates de MJ.'),
-        ('img2.jpg', 'LeBron gana su cuarto campeonato', 'El Rey consigue otro anillo de campeón.'),
-        ('img3.jpg', 'Homenaje a la leyenda Kobe Bryant', 'Recordando la carrera de Kobe en la NBA.'),
-        ('img4.jpg', 'Nuevo récord de puntos en un partido',
-         'Un jugador supera el récord de anotación en un solo partido.'),
-        ('img5.jpg', 'Increíble jugada de baloncesto', 'Una jugada asombrosa que dejó a todos sorprendidos.')
-    ]
-
+    publicaciones = get_posts()
     response = index.render(publicaciones=publicaciones, css_name='inicio.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
