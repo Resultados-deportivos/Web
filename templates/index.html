@@ -19,6 +19,15 @@
         <button class="comment">
           <span class="material-symbols-outlined">send</span>
         </button>
+        <div class="comment-list">
+              {% for comment in comments_list %}
+                {% if comment['publicacionid'] == publicaciones[0]['id'] %}
+                  <div class="comment">
+                    <p>{{ comment['descripcion'] }}</p>
+                  </div>
+                {% endif %}
+              {% endfor %}
+        </div>
       </div>
     </div>
   </div>

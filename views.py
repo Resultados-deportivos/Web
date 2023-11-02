@@ -16,7 +16,10 @@ crud = env.get_template('crud.html')
 
 def page_index(environ, start_response):
     publicaciones = get_posts()
-    response = index.render(publicaciones=publicaciones, css_name='inicio.css').encode('utf-8')
+    comments_list = get_comments()
+    print(comments_list)
+    print(publicaciones)
+    response = index.render(publicaciones=publicaciones, comments_list=comments_list, css_name='inicio.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
