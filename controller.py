@@ -1,6 +1,7 @@
 from wsgiref.simple_server import make_server
 from views import *
 
+admin_is_logged = True
 
 def app(environ, start_response):
     path = environ.get('PATH_INFO')
@@ -30,12 +31,15 @@ def app(environ, start_response):
         return page_admin(environ, start_response)
     # Admin loged
     elif path.startswith('/es/admin/crud/'):
-        # Obtener el nombre del usuario de la URL
+        if not admin_is_logged:
+            response_headers = [('Location', '/es/inicio')]
+            start_response('302 Found', response_headers)
+            return []
         return page_crud(environ, start_response)
     # Load CSS
     elif path == '/static/style.css' or path == '/static/inicio.css' or path == '/static/login.css' \
             or path == '/static/eventos.css' or path == '/static/competiciones.css'\
-            or path == '/static/equipos.css':
+            or path == '/static/equipos.css' or path == '/static/crud.css' :
         return serve_static(environ, start_response, path)
     # Load Folder /static/Img
     elif path.startswith('/static/img/'):

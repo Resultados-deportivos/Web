@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
 {% block maincontent %}
+
   <div class="main-publication">
     <div class="img">
       <img src="/static/img/publicaciones/{{ publicaciones[0]['img'] }}" alt="Imagen publicación">
@@ -16,7 +16,7 @@
       </button>
       <div class="comments">
         <input type="text" placeholder="Escribe un comentario">
-        <button class="comment">
+        <button class="comment-send">
           <span class="material-symbols-outlined">send</span>
         </button>
         <div class="comment-list">
@@ -34,13 +34,14 @@
 
   <div class="publication-list">
     {% for publicacion in publicaciones[1:] %}
-      <div class="card">
+    <div class="card" data-img="{{ publicacion['img'] }}" data-index="{{ publicacion['id'] }}" data-descripcion="{{ publicacion['descripcion'] }}" data-title="{{ publicacion['titulo'] }}">
         <div class="img">
           <img src="/static/img/publicaciones/{{ publicacion['img'] }}" alt="Imagen-publicacion">
         </div>
         <div class="description">
           <h2>{{ publicacion['titulo'] }}</h2>
           <p>{{ publicacion['descripcion'] }}</p>
+          <p>{{ publicacion['id'] }}</p>
           <button class="like" id="like-button-{{ publicacion['id'] }}">
             <span class="material-symbols-outlined">thumb_up</span>
           </button>
@@ -55,6 +56,37 @@
           </div>
         </div>
       </div>
+
     {% endfor %}
   </div>
+
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <div>
+      <img id="popup-img" src="" alt="Imagen publicación">
+    </div>
+    <div>
+      <div>
+        <h1 id="popup-title"></h1>
+        <p id="popup-description"></p>
+      </div>
+      <div>
+        <button class="like">
+          <span class="material-symbols-outlined">thumb_up</span>
+        </button>
+        <button class="unlike">
+          <span class="material-symbols-outlined">thumb_down</span>
+        </button>
+        <div class="comments">
+          <input type="text" placeholder="Escribe un comentario">
+          <button class="comment">
+            <span class="material-symbols-outlined">send</span>
+          </button>
+        </div>
+      </div>
+      <div></div>
+    </div>
+    <span class="close" id="close-popup">&times;</span>
+  </div>
+</div>
 {% endblock %}

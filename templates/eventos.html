@@ -3,13 +3,35 @@
 {% block maincontent %}
 <h1>Próximos Partidos</h1>
 {% for partido in events %}
+
 <div class="evetns-list">
-    <h3>{{ partido.fecha }}, Divison:{{ partido.idliga }}</h3>
+    <h3>{{ partido.fecha }},
+            {% for league in leagues %}
+                {% if league.id == partido.idliga %}
+                    <img src="/static/img/leagues_logo/{{ league.logo }}.png" alt="{{ league.nombre }}">
+                    {{ league.nombre }}
+                {% endif %}
+            {% endfor %}
+        </h3>
+
     <div class="card">
-        <h2>{{ partido.nombre }}</h2>
+        {%  for score in scores %}
+        <h2>
+            {{ partido.nombre.split('-')[0] }}
+            {% if score.eventoid == partido.id %}
+            {{ score.puntos }}
+            {% else %}
+            {{ ' _ - _ ' }}
+            {% endif %}
+            {{ partido.nombre.split('-')[1] }}
+        </h2>
+        {% endfor %}
         <p>{{ partido.horainicio }} - {{ partido.horafin }}</p>
-        <!-- <p>Estadio: {{ partido.idestadios }}</p> -->
-        <!-- <p>{{ partido.temporada }}</p> -->
+        {% for estadio in estadios %}
+        {% if partido.idestadios == estadio.id %}
+        <p>Estadio: {{ estadio.localizacion }}</p>
+        {% endif %}
+        {% endfor %}
     </div>
 </div>
 {% endfor %}

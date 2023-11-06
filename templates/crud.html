@@ -2,9 +2,181 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Panel de Administrador</title>
+    <link rel="stylesheet" href="/static/crud.css">
+    <link rel="shortcut icon" href="/static/img/admin-icon.png" type="image/x-icon">
 </head>
 <body>
-    CRUD
+    <h1>Usuarios</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.nombre }}</td>
+                    <td>{{ usuario.correo }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Competiciones</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Logo (url)</th>
+                <th>Temporada Actual</th>
+                <th>Youtube</th>
+                <th>Web</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for competicion in competiciones %}
+                <tr>
+                    <td>{{ competicion.id }}</td>
+                    <td>{{ competicion.nombre }}</td>
+                    <td>{{ competicion.logo }}</td>
+                    <td>{{ competicion.temporadaactual }}</td>
+                    <td>{{ competicion.youtube }}</td>
+                    <td>{{ competicion.web }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Equipos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Ciudad</th>
+                <th>Logo (url)</th>
+                <th>Youtube</th>
+                <th>Id Liga (FK)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for competicion in competiciones %}
+                <tr>
+                    <td>{{ competicion.id }}</td>
+                    <td>{{ competicion.nombre }}</td>
+                    <td>{{ competicion.ciudad }}</td>
+                    <td>{{ competicion.logo }}</td>
+                    <td>{{ competicion.youtube }}</td>
+                    <td>{{ competicion.id_liga }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+
+    <h1>Partidos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Fecha</th>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
+                <th>Temporada</th>
+                <th>Estadio (FK)</th>
+                <th>Liga (FK)</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for partido in partidos %}
+                <tr>
+                    <td>{{ partido.id }}</td>
+                    <td>{{ partido.nombre }}</td>
+                    <td>{{ partido.fecha }}</td>
+                    <td>{{ partido.horainicio }}</td>
+                    <td>{{ partido.horafin }}</td>
+                    <td>{{ partido.temporada }}</td>
+                    <td>{{ partido.idestadios }}</td>
+                    <td>{{ partido.idliga }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Publicaciones</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Id (PK)</th>
+                <th>Img (Ruta)</th>
+                <th>Titúlo</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in publicaciones %}
+                <tr>
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.img }}</td>
+                    <td>{{ post.titulo }}</td>
+                    <td>{{ post.descripcion }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Comentarios</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Publicacion (FK)</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments_list %}
+                <tr>
+                    <td>{{ comment.id }}</td>
+                    <td>{{ comment.publicacionid }}</td>
+                    <td>{{ comment.descripcion }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- <h1>Likes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            [{"id":2,"idusuario":2,"publicacionid":1,"descripcion":"Ese mate fue inolvidable."},{"id":3,"idusuario":3,
+            "publicacionid":2,"descripcion":"LeBron es una máquina en la cancha."},
+
+            {% for like in likes_list %}
+            [{"id":3,"publicacionid":2,"usuarioid":3,"likecount":1}
+                <tr>
+                    <td>{{ like.id }}</td>
+                    <td>{{ like.publicacionid }}</td>
+                    <td>{{ like.usuarioid }}</td>
+                    <td>{{ like.likecount }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table> -->
+
 </body>
 </html>

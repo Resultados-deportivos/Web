@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.engine import URL
 from dotenv import load_dotenv
+from pydantic import BaseModel
 import os
 from faker import Faker
 import random
@@ -11,13 +12,19 @@ import requests
 load_dotenv()  # Esto funciona para no tener credenciales guardadas en el propio codigo
 
 #api_url = "http://18.234.195.81/basket/"
-api_url = "http://localhost:8080/basket/"
+api_url = "https://donostipub.eus/api"
 
 url = URL.create("postgresql", username=os.getenv('USERNAME_DATABASE'), password=os.getenv('PASSWORD_DATABASE'),
                  host=os.getenv('HOST_DATABASE'), database=os.getenv('NAME_DATABASE'))
 engine = create_engine(url)
 
 Base = declarative_base()
+
+from pydantic import BaseModel
+
+class Usuarios(BaseModel):
+    apikey: str = 'apikey'
+    # Otros campos van aquí
 
 
 class Publicaciones(Base):
@@ -35,7 +42,7 @@ class Eventos(Base):
     fecha = Column(Date)
     horainicio = Column(Time)
     horafin = Column(Time)
-    temporada = Column(String(10))
+    temporaa = Column(String(10))
     idestadios = Column(Integer, ForeignKey('estadios.id'))
     idliga = Column(Integer, ForeignKey('ligas.id'))
 
@@ -53,6 +60,7 @@ class Jugadores(Base):
 
 
 class Usuarios(Base):
+    apikey: str = 'apikey'
     __tablename__ = 'usuarios'
     id = Column(Integer, primary_key=True)
     nombre = Column(String(255))
@@ -281,6 +289,32 @@ def get_events(fecha=None, temporada=None):
 
 
 def get_players(id_team=None):
+    if id is not None:
+        endpoint_name_by_id = f"players?equipoid={id_team}"
+
+        try:
+            response = requests.get(api_url + endpoint_name_by_id)
+            if response.status_code == 200:
+                data = response.json()
+                return data
+            else:
+                print(f"Status code: {response.status_code}")
+        except Exception as exception:
+            print(f"Error: {exception}")
+    else:
+        endpoint_name_all = "players"
+        try:
+            response = requests.get(api_url + endpoint_name_all)
+            if response.status_code == 200:
+                data = response.json()
+                return data
+            else:
+                print(f"Status code: {response.status_code}")
+        except Exception as exception:
+            print(f"Error: {exception}")
+    return None
+
+def get_players_crud(id_team=None):
     if id is not None:
         endpoint_name_by_id = f"players?equipoid={id_team}"
 
@@ -697,6 +731,31 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
     return None
 
 
-if __name__ == '__main__':
+def get_users_admin(correo, contrasena, admin=True):
+    '''
+        Podemos filtrar por cada parametro, por la combinacion de "correo" y "admin" o
+        sin parámetros
+        admin(Boolean)
+    '''
 
+
+    endpoint_name = "users"
+    endpoint_params = {}
+
+    endpoint_params['correo'] = correo
+    endpoint_params['contrasena'] = contrasena
+    endpoint_params['admin'] = admin
+    try:
+        response = requests.get(api_url + endpoint_name, params=endpoint_params)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            print(f"Response code: {response.status_code}")
+    except Exception as e:
+        return f"Error: {e}"
+
+
+if __name__ == '__main__':
     print(get_users())
+    print(get_users_admin('admin@gmail.com', 'Admin@123'))

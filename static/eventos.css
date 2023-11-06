@@ -16,6 +16,11 @@ h1 {
     color:black ;
 }
 
+.evetns-list img{
+    height:30px;
+    width:auto;
+}
+
 /* Style for each match */
 .match {
     border: 1px solid #ccc;

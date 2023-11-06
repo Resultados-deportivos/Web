@@ -51,7 +51,13 @@ def page_equipos(environ, start_response):
 
 def page_partidos(environ, start_response):
     events = get_events()
-    response = partidos.render(events=events, css_name='eventos.css').encode('utf-8')
+    scores = get_points()
+    leagues = get_leagues()
+    estadios = get_stadiums()
+    print(scores)
+    print(events)
+    print(leagues)
+    response = partidos.render(events=events, scores=scores, leagues=leagues, estadios=estadios, css_name='eventos.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -59,7 +65,7 @@ def page_partidos(environ, start_response):
 
 
 def page_sign_in(environ, start_response):
-    usuarios_list = get_users(admin=False)
+    usuarios_list = get_users(admin=True)
     print(usuarios_list)
     response = sign_in.render(css_name='login.css').encode('utf-8')
     status = '200 OK'
@@ -102,7 +108,8 @@ def page_sign_up(environ, start_response):
 
 
 def page_admin(environ, start_response):
-    usuarios = get_users(admin=True)
+    usuarios = get_users(correo="admin%40gmail.com", admin=True)
+    print(f"{usuarios} fjhsjklnfsdjnvkj")
     admin_user = None
 
     if environ['REQUEST_METHOD'] == 'POST':
@@ -157,7 +164,19 @@ def page_admin(environ, start_response):
 
 '''
 def page_crud(environ, start_response):
-    response = crud.render().encode('utf-8')
+    # usuarios=get_users()
+    competiciones = get_leagues()
+    equipos = get_teams()
+    players_list = get_players()
+    print(players_list)
+    partidos = get_events()
+    publicaciones = get_posts()
+    comments_list = get_comments()
+    #likes_list = get_likes()
+
+    # response = crud.render(usuarios=usuarios, competiciones=competiciones, equipos=equipos, partidos=partidos, comments_list=comments_list, publicaciones=publicaciones).encode('utf-8')
+    response = crud.render(competiciones=competiciones, equipos=equipos, partidos=partidos,
+                           comments_list=comments_list, publicaciones=publicaciones).encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
