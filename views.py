@@ -1,8 +1,8 @@
 from jinja2 import Environment, FileSystemLoader
 from models import *
 from flash_messages import *
-import os
-from http.cookies import SimpleCookie
+from utilities import *
+from http import cookies
 
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
@@ -14,11 +14,11 @@ sign_in = env.get_template('sign-in.html')
 sign_up = env.get_template('sign-up.html')
 admin = env.get_template('admin.html')
 crud = env.get_template('crud.html')
+forgot_pass = env.get_template('forgot_password.html')
+forgot_pass_code = env.get_template('forgot_passwd_code.html')
+set_new_pass = env.get_template('set_new_password.html')
 
-active_sessions = {}
-def start_session():
-    session_id = os.urandom(16).hex()
-    return session_id
+
 
 
 def page_index(environ, start_response):
@@ -54,9 +54,6 @@ def page_partidos(environ, start_response):
     scores = get_points()
     leagues = get_leagues()
     estadios = get_stadiums()
-    print(scores)
-    print(events)
-    print(leagues)
     response = partidos.render(events=events, scores=scores, leagues=leagues, estadios=estadios, css_name='eventos.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
@@ -65,28 +62,116 @@ def page_partidos(environ, start_response):
 
 
 def page_sign_in(environ, start_response):
-    usuarios_list = get_users(admin=True)
-    print(usuarios_list)
     response = sign_in.render(css_name='login.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
+    redirect_location = None
 
     if environ['REQUEST_METHOD'] == 'POST':
         form_data = parse_post_data(environ)
         email = form_data.get('email')
         password = form_data.get('password')
         print(email, password)
+        if verify_user_login(str(email[0]), str(password[0])):
+            print("ACCESS GRANTED")
 
-        for user in usuarios_list:
-            if user['correo'] == email and user['contrasena'] == password:
-                session_id = start_session()
-                active_sessions[session_id] = user  # Store user information in the active sessions
-                cookie = SimpleCookie()
-                cookie["session_id"] = session_id
-                start_response('302 Found', [('Location', '/es/inicio')])
-                return []
-            else:
-                print("No se encontró el usuario")
+            user = get_users(correo=str(email[0]))
+            cookie = cookies.SimpleCookie()
+
+            # Configurar la cookie de usuario
+            cookie['username'] = user[0]['nombre']
+            cookie['password'] = user[0]['contrasena']
+
+            # Obtener la representación de cadena de la cookie
+            cookie_string = cookie.output()
+
+            # Agregar la cookie a las cabeceras de respuesta
+            response_headers.append(('Set-Cookie', cookie_string))
+
+            redirect_location = '/es/partidos'
+        else:
+            print("ACCESS DENIED")
+
+    if redirect_location:
+        response_headers.append(('Location', redirect_location))
+        status = '302 Found'
+
+    start_response(status, response_headers)
+    return [response]
+
+
+verification_code = 0
+email = None
+
+
+def page_forgot_password(environ, start_response):
+    global verification_code
+    global email
+    verification_code = generate_verification_code()
+    response = forgot_pass.render().encode('utf-8')
+
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        email = form_data.get('email')
+
+        users = get_users(correo=email)
+
+        if users is not None:
+            status = '302 Found'
+            response_headers = [('Location', '/recuperar_contrasena/code')]
+            # Envía el código de verificación por correo electrónico
+            send_email(email, verification_code)
+        else:
+            print("No existe usuario con este email")
+    else:
+        # En caso de que no sea una solicitud POST, mantener el estado 200 OK
+        status = '200 OK'
+        response_headers = []
+
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_code(environ, start_response):
+    response = forgot_pass_code.render().encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        code_list = form_data.get('code')
+        code = str(code_list[
+                       0])  # Hay que convertirlo porque un formulario puede tener varios valores por eso devuelve una lista
+
+        if verification_code == code:
+            status = '302 Found'
+            response_headers = [('Location', '/recuperar_contrasena/set_new_pass')]
+        else:
+            status = '200 OK'
+            response = []
+
+    start_response(status, response_headers)
+    return [response]
+
+
+def set_new_password(environ, start_response):
+    response = set_new_pass.render().encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        password = form_data.get('password')
+        confirm_password = form_data.get('confirm_password')
+
+        if password == confirm_password:
+            update_passwd(str(email[0]), str(password[0]))
+        else:
+            status = '200 OK'
+            error_message = """
+            <script>
+                alert("Las contraseñas no coinciden. Por favor, inténtelo de nuevo.");
+            </script>
+            """
+            response = error_message.encode('UTF-8')
 
     start_response(status, response_headers)
     return [response]
@@ -97,12 +182,25 @@ def page_sign_up(environ, start_response):
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':
+        # Obtengo los datos
         form_data = parse_post_data(environ)
-        user = form_data.get('usuario')
+        username = form_data.get('usuario')
         email = form_data.get('email')
         password = form_data.get('password')
-        re_password= form_data.get('re-password')
-        print(email, password)
+        conf_passwd = form_data.get('rep-password')
+        print(username, email, password)
+
+        # Checkeo que el email y el nombre de usuario no estan en la BD
+        users = get_users(correo=str(email[0]))
+        # print(users)
+        if str(password[0]) == str(conf_passwd[0]):
+            if users == []:
+                insert_users_data(name=str(username[0]), password=str(password[0]), email=str(email[0]), isAdmin=False)
+            else:
+                # Añadir mensaje de que el nombre de usuario o email ya se encuentran en uso
+                print("No se insertan los datos")
+        else:
+            pass
     start_response(status, response_headers)
     return [response]
 
@@ -163,6 +261,8 @@ def page_admin(environ, start_response):
     return [response]
 
 '''
+
+
 def page_crud(environ, start_response):
     # usuarios=get_users()
     competiciones = get_leagues()

@@ -36,6 +36,13 @@ def app(environ, start_response):
             start_response('302 Found', response_headers)
             return []
         return page_crud(environ, start_response)
+    # Admin Forgot Password
+    elif path == '/recuperar_contrasena':
+        return page_forgot_password(environ, start_response)
+    elif path == '/recuperar_contrasena/code':
+        return page_code(environ, start_response)
+    elif path == '/recuperar_contrasena/set_new_pass':
+        return set_new_password(environ, start_response)
     # Load CSS
     elif path == '/static/style.css' or path == '/static/inicio.css' or path == '/static/login.css' \
             or path == '/static/eventos.css' or path == '/static/competiciones.css'\

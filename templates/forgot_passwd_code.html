@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <style>
+        body{
+            display: flex;
+            margin: 20vh;
+            padding: 0;
+        }
+        
+        .container{
+            background-color: #fff;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    padding: 20px;
+                    width: 50vh;
+                    margin: 0 auto;
+                    text-align: center;
+        }
+        
+        form{
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            padding: 5vh;
+            justify-content: center;
+            align-content: center;
+        }
+        
+        label{
+            text-align: center;
+            font-size: 14pt;
+            font-family: 'Calibri';
+            padding-bottom: 3vh;
+        }
+        
+        input{
+            text-align: center;
+            margin-bottom: 3vh;
+        }
+        
+        button{
+            width: 15vh;
+            align-self: center;
+            background-color: orange;
+            color: white;
+            padding: 10px 2px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover{
+            background-color: darkorange;
+        }
+
+        #email_button{
+            width: 20vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="forgot" method="post" >
+            <label for="code">Introduce el código enviado a tu email:</label>
+            <input id="code" name="code" type="text">
+            <button type="submit">Validar</button>
+        </form>
+    </div>
+</body>
+</html>

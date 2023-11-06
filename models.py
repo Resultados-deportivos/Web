@@ -3,16 +3,17 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.engine import URL
 from dotenv import load_dotenv
-from pydantic import BaseModel
 import os
 from faker import Faker
 import random
 import requests
+from utilities import *
+from passlib.hash import sha256_crypt
+
 
 load_dotenv()  # Esto funciona para no tener credenciales guardadas en el propio codigo
 
-#api_url = "http://18.234.195.81/basket/"
-api_url = "https://donostipub.eus/api"
+api_url = "http://107.21.15.75/basket/"
 
 url = URL.create("postgresql", username=os.getenv('USERNAME_DATABASE'), password=os.getenv('PASSWORD_DATABASE'),
                  host=os.getenv('HOST_DATABASE'), database=os.getenv('NAME_DATABASE'))
@@ -20,13 +21,8 @@ engine = create_engine(url)
 
 Base = declarative_base()
 
-from pydantic import BaseModel
 
-class Usuarios(BaseModel):
-    apikey: str = 'apikey'
-    # Otros campos van aquí
-
-
+# Modelos de la base de datos
 class Publicaciones(Base):
     __tablename__ = 'publicaciones'
     id = Column(Integer, primary_key=True)
@@ -42,7 +38,7 @@ class Eventos(Base):
     fecha = Column(Date)
     horainicio = Column(Time)
     horafin = Column(Time)
-    temporaa = Column(String(10))
+    temporada = Column(String(10))
     idestadios = Column(Integer, ForeignKey('estadios.id'))
     idliga = Column(Integer, ForeignKey('ligas.id'))
 
@@ -60,7 +56,6 @@ class Jugadores(Base):
 
 
 class Usuarios(Base):
-    apikey: str = 'apikey'
     __tablename__ = 'usuarios'
     id = Column(Integer, primary_key=True)
     nombre = Column(String(255))
@@ -128,6 +123,7 @@ class Puntos(Base):
     puntos = Column(String)
 
 
+# Insertar datos utilizando los modelos
 def insert_player_data(ID, name, lastname, fecha_nacim, teamid, height, weight, number):
     Session = sessionmaker(bind=engine)
     sesion = Session()
@@ -144,6 +140,7 @@ def insert_stadium_data(location, capacity):
     new_register = Estadios(localizacion=location, capacidad=capacity)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_teams_data(ID, name, city, brand, id_league):
@@ -152,6 +149,7 @@ def insert_teams_data(ID, name, city, brand, id_league):
     new_register = Equipos(id=ID, nombre=name, ciudad=city, logo=brand, id_liga=id_league)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_league_data(ID, name, brand, actual_season, yt, web_url):
@@ -160,6 +158,7 @@ def insert_league_data(ID, name, brand, actual_season, yt, web_url):
     new_register = Ligas(id=ID, nombre=name, logo=brand, temporadaactual=actual_season, youtube=yt, web=web_url)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_events_data(ID, name, event_date, init_hour, end_hour, season, stadium_id, league_id):
@@ -169,6 +168,7 @@ def insert_events_data(ID, name, event_date, init_hour, end_hour, season, stadiu
                            temporada=season, idestadios=stadium_id, idliga=league_id)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_coments_data(user_id, publication_id, description):
@@ -177,6 +177,7 @@ def insert_coments_data(user_id, publication_id, description):
     new_register = Comentarios(idusuario=user_id, publicacionid=publication_id, descripcion=description)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_likes_data(publication_id, user_id, like_count):
@@ -185,6 +186,7 @@ def insert_likes_data(publication_id, user_id, like_count):
     new_register = Likes(publicacionid=publication_id, usuarioid=user_id, likecount=like_count)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_publications_data(pub_img, pub_title, pub_desc):
@@ -193,6 +195,7 @@ def insert_publications_data(pub_img, pub_title, pub_desc):
     new_register = Publicaciones(img=pub_img, titulo=pub_title, descripcion=pub_desc)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_registers_data(game_id, jugador_id, action, minute):
@@ -201,14 +204,16 @@ def insert_registers_data(game_id, jugador_id, action, minute):
     new_register = Registros(partidoid=game_id, jugadorid=jugador_id, accion=action, minuto=minute)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
-def insert_users_data(name, password, email, isAdmin):
+def insert_users_data(name, password, email, isAdmin=None):
     Session = sessionmaker(bind=engine)
     session = Session()
-    new_register = Usuarios(nombre=name, contrasena=password, correo=email, admin=isAdmin)
+    new_register = Usuarios(nombre=name, contrasena=sha256_crypt.hash(password), correo=email, admin=isAdmin)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
 def insert_points_data(event_id, points):
@@ -217,8 +222,10 @@ def insert_points_data(event_id, points):
     new_register = Puntos(eventoid=event_id, puntos=points)
     session.add(new_register)
     session.commit()
+    session.close()
 
 
+# Def para generar datos falsos en la BD utilizando la librería Faker
 def generate_fake_data():
     fake = Faker()
 
@@ -239,6 +246,7 @@ def generate_fake_data():
         insert_player_data(*record)
 
 
+# Obtener datos de la API
 def get_events(fecha=None, temporada=None):
     '''
         La fecha tiene que ser en el formato que esté en la base de datos que estes utilizando
@@ -289,32 +297,6 @@ def get_events(fecha=None, temporada=None):
 
 
 def get_players(id_team=None):
-    if id is not None:
-        endpoint_name_by_id = f"players?equipoid={id_team}"
-
-        try:
-            response = requests.get(api_url + endpoint_name_by_id)
-            if response.status_code == 200:
-                data = response.json()
-                return data
-            else:
-                print(f"Status code: {response.status_code}")
-        except Exception as exception:
-            print(f"Error: {exception}")
-    else:
-        endpoint_name_all = "players"
-        try:
-            response = requests.get(api_url + endpoint_name_all)
-            if response.status_code == 200:
-                data = response.json()
-                return data
-            else:
-                print(f"Status code: {response.status_code}")
-        except Exception as exception:
-            print(f"Error: {exception}")
-    return None
-
-def get_players_crud(id_team=None):
     if id is not None:
         endpoint_name_by_id = f"players?equipoid={id_team}"
 
@@ -654,10 +636,14 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
     '''
     endpoint_name = "users"
     endpoint_params = {}
+    header = {
+        'apikey': 'apikey'
+    }
+
     if id is not None and nombre is None and correo is None and admin is None:
         endpoint_params['id'] = id
         try:
-            response = requests.get(api_url + endpoint_name, params=endpoint_params)
+            response = requests.get(api_url + endpoint_name, params=endpoint_params, headers=header)
             if response.status_code == 200:
                 data = response.json()
                 return data
@@ -668,7 +654,7 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
     elif id is None and nombre is not None and correo is None and admin is None:
         endpoint_params['nombre'] = nombre
         try:
-            response = requests.get(api_url + endpoint_name, params=endpoint_params)
+            response = requests.get(api_url + endpoint_name, params=endpoint_params, headers=header)
             if response.status_code == 200:
                 data = response.json()
                 return data
@@ -679,7 +665,7 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
     elif id is None and nombre is None and correo is not None and admin is None:
         endpoint_params['correo'] = correo
         try:
-            response = requests.get(api_url + endpoint_name, params=endpoint_params)
+            response = requests.get(api_url + endpoint_name, params=endpoint_params, headers=header)
             if response.status_code == 200:
                 data = response.json()
                 return data
@@ -691,7 +677,7 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
         endpoint_params['admin'] = admin
         try:
             if isinstance(admin, bool):
-                response = requests.get(api_url + endpoint_name, params=endpoint_params)
+                response = requests.get(api_url + endpoint_name, params=endpoint_params, headers=header)
                 if response.status_code == 200:
                     data = response.json()
                     return data
@@ -707,7 +693,7 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
         endpoint_params['admin'] = admin
         try:
             if isinstance(admin, bool):
-                response = requests.get(api_url + endpoint_name, params=endpoint_params)
+                response = requests.get(api_url + endpoint_name, params=endpoint_params, headers=header)
                 if response.status_code == 200:
                     data = response.json()
                     return data
@@ -720,7 +706,7 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
             print(f"Error: {e}")
     else:
         try:
-            response = requests.get(api_url + endpoint_name)
+            response = requests.get(api_url + endpoint_name, headers=header)
             if response.status_code == 200:
                 data = response.json()
                 return data
@@ -731,31 +717,55 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
     return None
 
 
-def get_users_admin(correo, contrasena, admin=True):
+def verify_user_login(email, passwd):
     '''
-        Podemos filtrar por cada parametro, por la combinacion de "correo" y "admin" o
-        sin parámetros
-        admin(Boolean)
+        Esta def recibe el nombre de usuario y contraseña introducidos en el formulario de login
     '''
-
-
-    endpoint_name = "users"
-    endpoint_params = {}
-
-    endpoint_params['correo'] = correo
-    endpoint_params['contrasena'] = contrasena
-    endpoint_params['admin'] = admin
-    try:
-        response = requests.get(api_url + endpoint_name, params=endpoint_params)
-        if response.status_code == 200:
-            data = response.json()
-            return data
+    user_data = get_users(correo=email)
+    print(user_data)
+    if user_data is not None:
+        if sha256_crypt.verify(passwd, user_data[0]['contrasena']):
+            return True
         else:
-            print(f"Response code: {response.status_code}")
-    except Exception as e:
-        return f"Error: {e}"
+            return False
+
+
+def forgot_password(user_email):
+    '''
+        Ejemplo de la lógica a llevar a cabo en esta función
+    '''
+    # Hacemos un diccionario y asociamos su email con el codigo de verificacion enviado por email
+    user_lib = {}
+    user_lib['email'] = user_email
+    user_lib['verification_code'] = generate_verification_code()
+
+    # Enviamos el correo y si el verification_code ingresado por el usuario es igual al que tenemos asociado
+    # le permitimos cambiar la contraseña
+    send_email(**user_lib)
+
+    ver_code = input("Introduce tu codigo de verificacion: ")
+
+    if user_lib['verification_code'] == ver_code:
+        print("Access Granted")
+        # Ejecutar logica del codigo
+    else:
+        # Denegar permisos o redireccionar
+        print("Access Denied")
+
+
+def update_passwd(email, new_passwd):
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    user = session.query(Usuarios).filter(Usuarios.correo == email).first()
+    user.contrasena = sha256_crypt.hash(new_passwd)
+
+    session.add(user)
+    session.commit()
 
 
 if __name__ == '__main__':
-    print(get_users())
-    print(get_users_admin('admin@gmail.com', 'Admin@123'))
+    pass
+    '''
+        Code...
+    '''
