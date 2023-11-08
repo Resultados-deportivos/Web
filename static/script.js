@@ -5,7 +5,27 @@ function sign_in() {
 function sign_up() {
     window.location.href = '/es/sign-up';
 }
+// User profile list
+var userProfile = document.getElementById('userProfile');
+var userList = document.getElementById('userList');
 
+userProfile.addEventListener('click', function (event) {
+    if (userList.style.display === 'block') {
+        userList.style.display = 'none';
+    } else {
+        userList.style.display = 'block';
+    }
+
+    event.stopPropagation(); // Prevent the document click event from immediately closing the list
+});
+
+// Hide the user list when clicking outside of it
+document.addEventListener('click', function (event) {
+    var isClickInside = userProfile.contains(event.target);
+    if (!isClickInside) {
+        userList.style.display = 'none';
+    }
+});
 const cards = document.querySelectorAll('.card');
 const popup = document.getElementById('popup');
 const popupTitle = document.getElementById('popup-title');
@@ -22,10 +42,43 @@ cards.forEach(card => {
         imgPopup.src = `/static/img/publicaciones/${img}`;
         popupTitle.textContent = `${title}`;
         popupDescription.textContent = `${descripcion}`;
-        popup.style.display = 'block';
+        popup.style.display = 'flex';
         });
     });
-closePopup.addEventListener('click', () => {
-            popup.style.display = 'none';
-        });
+    closePopup.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+console.log("ESTO FUNCIONA")
+// Pop-up if user not logged in
+const likeButton = document.getElementById("like-button-popup");
+const unlikeButton = document.getElementById("unlike-button-popup");
+const sendButton = document.getElementById("send-button-popup");
+const popupLogin = document.getElementById("popup-login");
+const closeLogPopup = document.getElementById('close-login-popup');
+
+
+
+likeButton.addEventListener("click", () => {
+    // Muestra el pop-up
+    popupLogin.style.display = "block";
+    // Puedes personalizar el contenido del pop-up aquí
+    // Por ejemplo, puedes cambiar el título y descripción:
+
+});
+
+unlikeButton.addEventListener("click", () => {
+
+    popupLogin.style.display = "block";
+  
+});
+
+
+sendButton.addEventListener("click", () => {
+    popupLogin.style.display = "block";
+
+});
+closeLogPopup.addEventListener('click', () => {
+    popupLogin.style.display = 'none';
+});
+
 

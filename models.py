@@ -13,7 +13,8 @@ from passlib.hash import sha256_crypt
 
 load_dotenv()  # Esto funciona para no tener credenciales guardadas en el propio codigo
 
-api_url = "http://107.21.15.75/basket/"
+# api_url = "http://donostipub.eus/basket/"
+api_url = "http://localhost:8080/basket/"
 
 url = URL.create("postgresql", username=os.getenv('USERNAME_DATABASE'), password=os.getenv('PASSWORD_DATABASE'),
                  host=os.getenv('HOST_DATABASE'), database=os.getenv('NAME_DATABASE'))
@@ -251,7 +252,7 @@ def get_events(fecha=None, temporada=None):
     '''
         La fecha tiene que ser en el formato que esté en la base de datos que estes utilizando
     '''
-    endpoint_name = "events"
+    endpoint_name = "events?obf=true"
     endpoint_params = {}
     # Para filtrar por fecha
     if fecha is not None and temporada is None:

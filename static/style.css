@@ -4,6 +4,7 @@ body {
     padding: 0;
     color: #333;
 }
+
 /*----------------------------------------------------------------HEADER----------------------------------------------------------------*/
 header {
     display: flex;
@@ -14,25 +15,28 @@ header {
     color: white;
 }
 
-ul{
+ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
-    color:white;
+    color: white;
 }
 
 li {
-    list-style:none;
+    list-style: none;
     margin-right: 20px;
-    color:white;
-}
-a{
-    text-decoration:white;
-    color:white;
+    color: white;
 }
 
-.search, .icon, .register {
+a {
+    text-decoration: white;
+    color: white;
+}
+
+.search,
+.icon,
+.register {
     display: flex;
     align-items: center;
 }
@@ -43,54 +47,116 @@ a{
     border: none;
     cursor: pointer;
     margin-right: 20px;
-    color:white;
+    color: white;
 }
+
 .icon img {
     max-width: 50px;
 }
 
 .register button {
     background-color: RGB(255, 102, 0);
-    height:80%;
+    height: 80%;
     color: white;
     padding: 5px 15px;
     border: none;
     cursor: pointer;
     margin-left: 20px;
 }
+
+/* Style for the rounded div */
+.user-profile {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background-color: orange;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Style for the user icon (you can use your own font icons or images) */
+.user-icon {
+    font-size: 20px;
+    color: #fff;
+}
+
+/* Style for the user list */
+.user-list {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    list-style: none;
+    padding: 0;
+}
+
+.user-list li {
+    padding: 10px;
+    text-align: center;
+    background-color: #f0f0f0;
+    color: black;
+}
+
+/* Hover effect for the user list items */
+.user-list li:hover {
+    background-color: orange;
+
+}
+
 /*----------------------------------------------------------------MAIN----------------------------------------------------------------*/
 main {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     min-height: 100vh;
-    min-width:88%;
+    min-width: 88%;
 }
-.content{
+
+.content {
     margin-top: 20px;
     width: 88%;
 }
 
+.flash-message {
+    cursor: pointer;
+    color: white;
+    background-color: red;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
 /*----------------------------------------------------------------FOOTER----------------------------------------------------------------*/
 footer {
-  background-color: #333;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 20px;
-  color: rgb(241, 237, 255);
-  font-size: 18px;
+    background-color: #333;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    color: rgb(241, 237, 255);
+    font-size: 18px;
 }
 
 .social-icons a {
-  margin-left: 10px;
-  text-decoration: none;
-  color:rgb(241, 237, 255);
-  font-size: 24px;
+    margin-left: 10px;
+    text-decoration: none;
+    color: rgb(241, 237, 255);
+    font-size: 24px;
 }
 
 .social-icons a:hover {
-  font-size: 24px;
-  color: purple;
+    font-size: 24px;
+    color: purple;
 }
 
+.user-log {
+    border-radius: 10px;
+    background-color: white;
+    color: black;
+}

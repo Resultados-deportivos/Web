@@ -4,6 +4,13 @@
 <div class="login-container">
     <h1>Crea tu cuenta</h1>
     <form id="login-form" method="POST">
+        {% if flash_messages %}
+            {% for message in flash_messages %}
+                <div class="flash-message">
+                    {{ message.message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         <div class="inputs-container">
             <div class="user-correo">
                 <label for="email">Correo Electrónico:</label>
@@ -26,6 +33,7 @@
     <p>¿Ya tienes una cuenta? <a href="/es/sign-in">Inicia sesión</a></p>
 </div>
 <script>
+/*
     function confirm_pass(){
         const password = document.getElementById('password').value
         const repeat_password = document.getElementById('rep-password').value
@@ -34,5 +42,6 @@
             alert("Las contrseñas no coinciden")
         }
     }
+    */
 </script>
 {% endblock %}

@@ -4,6 +4,13 @@
 <div class="login-container">
     <h1>Registrarse</h1>
     <form id="login-form" method="POST">
+        {% if flash_messages %}
+            {% for message in flash_messages %}
+                <div class="flash-message {{ message.type }}">
+                    {{ message.message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         <div class="form-group">
             <label for="email">Correo Electrónico:</label>
             <input type="email" id="email" name="email" required>

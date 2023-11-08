@@ -1,6 +1,6 @@
 from jinja2 import Environment, FileSystemLoader
 from models import *
-from flash_messages import *
+from flash_manager import *
 from utilities import *
 from http import cookies
 
@@ -17,23 +17,28 @@ crud = env.get_template('crud.html')
 forgot_pass = env.get_template('forgot_password.html')
 forgot_pass_code = env.get_template('forgot_passwd_code.html')
 set_new_pass = env.get_template('set_new_password.html')
-
-
+logout = env.get_template('logout.html')
+user_info = {}
 
 
 def page_index(environ, start_response):
+    global user_info
     publicaciones = get_posts()
     comments_list = get_comments()
-    response = index.render(publicaciones=publicaciones, comments_list=comments_list, css_name='inicio.css').encode('utf-8')
+    response = index.render(user_info=user_info, publicaciones=publicaciones, comments_list=comments_list, css_name='inicio.css').encode(
+        'utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
+    # response_headers.append(('Set-Cookie', str(user_info)))
     start_response(status, response_headers)
     return [response]
 
 
 def page_competiciones(environ, start_response):
+    global user_info
     competiciones_list = get_leagues()
-    response = competiciones.render(competiciones_list=competiciones_list, css_name='competiciones.css').encode('utf-8')
+    print(competiciones_list)
+    response = competiciones.render(user_info=user_info, competiciones_list=competiciones_list, css_name='competiciones.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -41,8 +46,9 @@ def page_competiciones(environ, start_response):
 
 
 def page_equipos(environ, start_response):
+    global user_info
     equipos_list = get_teams()
-    response = equipos.render(equipos_list=equipos_list, css_name='equipos.css').encode('utf-8')
+    response = equipos.render(user_info=user_info, equipos_list=equipos_list, css_name='equipos.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -50,11 +56,12 @@ def page_equipos(environ, start_response):
 
 
 def page_partidos(environ, start_response):
+    global user_info
     events = get_events()
     scores = get_points()
     leagues = get_leagues()
     estadios = get_stadiums()
-    response = partidos.render(events=events, scores=scores, leagues=leagues, estadios=estadios, css_name='eventos.css').encode('utf-8')
+    response = partidos.render(user_info=user_info, events=events, scores=scores, leagues=leagues, estadios=estadios, css_name='eventos.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -62,7 +69,9 @@ def page_partidos(environ, start_response):
 
 
 def page_sign_in(environ, start_response):
-    response = sign_in.render(css_name='login.css').encode('utf-8')
+    global user_info
+    user_info = is_user_logged_in(environ)
+    flash_manager = FlashMessageManager()
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     redirect_location = None
@@ -79,6 +88,7 @@ def page_sign_in(environ, start_response):
             cookie = cookies.SimpleCookie()
 
             # Configurar la cookie de usuario
+            cookie['id'] = user[0]['id']
             cookie['username'] = user[0]['nombre']
             cookie['password'] = user[0]['contrasena']
 
@@ -87,15 +97,16 @@ def page_sign_in(environ, start_response):
 
             # Agregar la cookie a las cabeceras de respuesta
             response_headers.append(('Set-Cookie', cookie_string))
-
+            user_info['username'] = user[0]['nombre']
             redirect_location = '/es/partidos'
         else:
+            flash_manager.add_message("El usuario o contraseña no existen.", "error")
             print("ACCESS DENIED")
 
     if redirect_location:
         response_headers.append(('Location', redirect_location))
         status = '302 Found'
-
+    response = sign_in.render(css_name='login.css', flash_messages=flash_manager.get_messages(), user_info=user_info).encode('utf-8')
     start_response(status, response_headers)
     return [response]
 
@@ -178,7 +189,7 @@ def set_new_password(environ, start_response):
 
 
 def page_sign_up(environ, start_response):
-    response = sign_up.render(css_name='login.css').encode('utf-8')
+    flash_manager = FlashMessageManager()
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':
@@ -197,10 +208,13 @@ def page_sign_up(environ, start_response):
             if users == []:
                 insert_users_data(name=str(username[0]), password=str(password[0]), email=str(email[0]), isAdmin=False)
             else:
+                flash_manager.add_message("Las contraseñas no coinciden.", "error")
                 # Añadir mensaje de que el nombre de usuario o email ya se encuentran en uso
                 print("No se insertan los datos")
         else:
+            flash_manager.add_message("Las contraseñas no coinciden.", "error")
             pass
+    response = sign_up.render(css_name='login.css', flash_messages=flash_manager.get_messages()).encode('utf-8')
     start_response(status, response_headers)
     return [response]
 
@@ -220,47 +234,16 @@ def page_admin(environ, start_response):
             True)
 
     if admin_user:
-        add_flash_message('Bienvenido', 'success')  # Add a flash message
         response_headers = [('Location', '/es/admin/crud/')]
         status = '302 Found'
         start_response(status, response_headers)
         return []
-
-    flash_messages = get_flash_messages()  # Retrieve flash messages
-    response = admin.render(css_name='login.css', flash_messages=flash_messages, message="No se encontró").encode('utf-8')
+    response = admin.render(css_name='login.css').encode(
+        'utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     return [response]
-'''
-def page_admin(environ, start_response):
-    usuarios = get_users(admin=True)
-    admin_user = None
-
-    if environ['REQUEST_METHOD'] == 'POST':
-        form_data = parse_post_data(environ)
-        email = form_data.get('email')
-        password = form_data.get('password')
-
-        # Buscar el usuario en la lista de usuarios con "admin" True
-        admin_user = next(
-            (user for user in usuarios if user['correo'] == email and user['contrasena'] == password and user['admin']),
-            True)
-
-    if admin_user:
-
-        response_headers = [('Location', '/es/admin/crud/')]
-        status = '302 Found'
-        start_response(status, response_headers)
-        return []
-
-    response = admin.render(css_name='login.css', message="No se encontró").encode('utf-8')
-    status = '200 OK'
-    response_headers = [('Content-type', 'text/html')]
-    start_response(status, response_headers)
-    return [response]
-
-'''
 
 
 def page_crud(environ, start_response):
@@ -272,7 +255,7 @@ def page_crud(environ, start_response):
     partidos = get_events()
     publicaciones = get_posts()
     comments_list = get_comments()
-    #likes_list = get_likes()
+    # likes_list = get_likes()
 
     # response = crud.render(usuarios=usuarios, competiciones=competiciones, equipos=equipos, partidos=partidos, comments_list=comments_list, publicaciones=publicaciones).encode('utf-8')
     response = crud.render(competiciones=competiciones, equipos=equipos, partidos=partidos,
@@ -283,10 +266,53 @@ def page_crud(environ, start_response):
     return [response]
 
 
+import datetime
+
+def clear_cookie(cookie_name):
+    cookie = cookies.SimpleCookie()
+    cookie[cookie_name] = ''
+    # Establecer una fecha de expiración en el pasado (por ejemplo, hace 1 segundo)
+    expiration_time = datetime.datetime.now() - datetime.timedelta(seconds=1)
+    cookie[cookie_name]['expires'] = expiration_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
+    return cookie
+
+
+def page_sign_out(environ, start_response):
+    global user_info  # Asegúrate de tener acceso a la variable user_info
+    response = logout.render().encode('utf-8')
+
+    # Limpia las cookies de usuario
+    clear_username_cookie = clear_cookie('username')
+    clear_password_cookie = clear_cookie('password')
+    cookie_string_username = clear_username_cookie.output()
+    cookie_string_password = clear_password_cookie.output()
+    response_headers = [('Set-Cookie', cookie_string_username),
+                        ('Set-Cookie', cookie_string_password)]
+
+    # response_headers.append(('Location', '/signin'))  # Cambia "/signin" al URL correcto de inicio de sesión
+
+    status = '302 Found'
+    start_response(status, response_headers)
+    return [response]
+
+
 def redirect_inicio(environ, start_response):
     response_headers = [('Location', '/es/inicio')]
     start_response('302 Found', response_headers)
     return []
+
+
+def is_user_logged_in(environ):
+    cookie = cookies.SimpleCookie()
+    cookie.load(environ.get('HTTP_COOKIE', ''))
+
+    if 'username' in cookie and 'password' in cookie:
+        # You can check if the username and password are valid
+        username = cookie['username'].value
+        password = cookie['password'].value
+        return {username, password}  # Implement this function
+    else:
+        return {}
 
 
 def parse_post_data(environ):

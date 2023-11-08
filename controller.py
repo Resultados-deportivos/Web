@@ -26,6 +26,9 @@ def app(environ, start_response):
     # Sign Up
     elif path == '/es/sign-up':
         return page_sign_up(environ, start_response)
+    #Sign Out
+    elif path == '/es/sign-out':
+        return page_sign_out(environ, start_response)
     # Admin
     elif path == '/es/admin':
         return page_admin(environ, start_response)

@@ -5,15 +5,14 @@
 {% for partido in events %}
 
 <div class="evetns-list">
-    <h3>{{ partido.fecha }},
-            {% for league in leagues %}
+    <h3>{{ partido.fecha }}</h3>
+
+    {% for league in leagues %}
                 {% if league.id == partido.idliga %}
                     <img src="/static/img/leagues_logo/{{ league.logo }}.png" alt="{{ league.nombre }}">
                     {{ league.nombre }}
                 {% endif %}
-            {% endfor %}
-        </h3>
-
+    {% endfor %}
     <div class="card">
         {%  for score in scores %}
         <h2>
@@ -36,3 +35,5 @@
 </div>
 {% endfor %}
 {% endblock %}
+
+
