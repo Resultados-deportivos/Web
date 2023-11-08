@@ -3,6 +3,8 @@ from models import *
 from flash_manager import *
 from utilities import *
 from http import cookies
+import datetime
+from tabulate import tabulate
 
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
@@ -58,6 +60,7 @@ def page_equipos(environ, start_response):
 def page_partidos(environ, start_response):
     global user_info
     events = get_events()
+    tabulate(events)
     scores = get_points()
     leagues = get_leagues()
     estadios = get_stadiums()
@@ -266,8 +269,6 @@ def page_crud(environ, start_response):
     return [response]
 
 
-import datetime
-
 def clear_cookie(cookie_name):
     cookie = cookies.SimpleCookie()
     cookie[cookie_name] = ''
@@ -278,7 +279,8 @@ def clear_cookie(cookie_name):
 
 
 def page_sign_out(environ, start_response):
-    global user_info  # Asegúrate de tener acceso a la variable user_info
+    global user_info
+    user_info = {}
     response = logout.render().encode('utf-8')
 
     # Limpia las cookies de usuario

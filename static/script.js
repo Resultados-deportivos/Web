@@ -9,6 +9,7 @@ function sign_up() {
 var userProfile = document.getElementById('userProfile');
 var userList = document.getElementById('userList');
 
+if(userProfile !== null){
 userProfile.addEventListener('click', function (event) {
     if (userList.style.display === 'block') {
         userList.style.display = 'none';
@@ -18,6 +19,7 @@ userProfile.addEventListener('click', function (event) {
 
     event.stopPropagation(); // Prevent the document click event from immediately closing the list
 });
+}
 
 // Hide the user list when clicking outside of it
 document.addEventListener('click', function (event) {
@@ -61,8 +63,6 @@ const closeLogPopup = document.getElementById('close-login-popup');
 likeButton.addEventListener("click", () => {
     // Muestra el pop-up
     popupLogin.style.display = "block";
-    // Puedes personalizar el contenido del pop-up aquí
-    // Por ejemplo, puedes cambiar el título y descripción:
 
 });
 
@@ -71,7 +71,6 @@ unlikeButton.addEventListener("click", () => {
     popupLogin.style.display = "block";
   
 });
-
 
 sendButton.addEventListener("click", () => {
     popupLogin.style.display = "block";
