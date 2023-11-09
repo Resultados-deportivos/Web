@@ -153,11 +153,33 @@
     color:white;
  }
 #popup-login{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 1);
  }
+#popup-login .popup-content{
+    width: 100%;
+    height: 30%;
+    margin: 20% auto;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0);
+}
+#popup-login .button{
+    background-color: #fd7600df;
+    color: white;
+    padding: 10px 20px;
+    border-radius:100px;
+}
 #popup-login a{
-     color: #fd7600df;
      text-decoration: none;
 }
+
 #popup-login a:hover{
     text-decoration: underline;
 }

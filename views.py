@@ -223,6 +223,7 @@ def set_new_password(environ, start_response):
 
         if password == confirm_password:
             update_passwd(str(email[0]), str(password[0]))
+            response_headers.append(('Location', '/es/inicio'))
         else:
             status = '200 OK'
             flash_manager.add_message("Las contraseñas no coinciden.", "error")
