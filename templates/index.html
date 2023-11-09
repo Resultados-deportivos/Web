@@ -19,28 +19,25 @@
 
       <div class="comments">
         <form method="POST">
-          <input id="input" name="comment" type="text" placeholder="Escribe un comentario">
+          <input name="comment" type="text" placeholder="Escribe un comentario">
           <input type="hidden" name="publication_id" value="{{ publicaciones[0]['id'] }}">
           <button class="comment-send" id="send-button" type="submit">
           <span class="material-symbols-outlined">send</span>
           </button>
         </form>
-
-
-      {% else %}
-        <button class="like" id="like-button-popup">
-          <span class="material-symbols-outlined">thumb_up</span>
+        {% else %}
+        <button class="like like-button-popup">
+            <span class="material-symbols-outlined">thumb_up</span>
         </button>
-  
-        <button class="unlike" id="unlike-button-popup">
-          <span class="material-symbols-outlined">thumb_down</span>
+        <button class="unlike unlike-button-popup">
+            <span class="material-symbols-outlined">thumb_down</span>
         </button>
-  
         <div class="comments">
-          <input id="input" type="text" placeholder="Escribe un comentario">
-          <button class="comment-send" id="send-button-popup">
-            <span class="material-symbols-outlined">send</span>
-          </button>
+            <input id="input" type="text" placeholder="Escribe un comentario">
+            <button class="comment-send send-button-popup">
+                <span class="material-symbols-outlined">send</span>
+            </button>
+        </div>
         {% endif %}
         <div class="comment-list">
               {% for comment in comments_list %}
@@ -63,8 +60,7 @@
         </div>
         <div class="description">
           <h2>{{ publicacion['titulo'] }}</h2>
-          <p>{{ publicacion['descripcion'] }}</p>
-          <p>{{ publicacion['id'] }}</p>
+          <p>{{ publicacion['descripcion'][:100] }}...</p>
         </div>
       </div>
 
@@ -81,19 +77,40 @@
         <h1 id="popup-title"></h1>
         <p id="popup-description"></p>
       </div>
-      <div class="popup-like-comments">
-        <button class="like">
+
+        <div class="popup-like-comments">
+        {% if user_info %}
+        <button class="like" id="like-button">
           <span class="material-symbols-outlined">thumb_up</span>
         </button>
-        <button class="unlike">
+
+        <button class="unlike" id="unlike-button">
           <span class="material-symbols-outlined">thumb_down</span>
         </button>
+
         <div class="comments">
-          <input type="text" placeholder="Escribe un comentario">
-          <button class="comment">
-            <span class="material-symbols-outlined">send</span>
+        <form method="POST">
+          <input name="comment" type="text" placeholder="Escribe un comentario">
+          <input type="hidden" id="input-popup" name="publication_id" value="">
+          <button class="comment-send" id="send-button" type="submit">
+          <span class="material-symbols-outlined">send</span>
           </button>
+        </form>
+        {% else %}
+        <button class="like like-button-popup">
+                  <span class="material-symbols-outlined">thumb_up</span>
+        </button>
+        <button class="unlike unlike-button-popup">
+            <span class="material-symbols-outlined">thumb_down</span>
+        </button>
+        <div class="comments">
+            <input type="text" placeholder="Escribe un comentario">
+            <button class="comment-send send-button-popup">
+                <span class="material-symbols-outlined">send</span>
+            </button>
         </div>
+        {% endif %}
+
       </div>
     </div>
     <span class="close" id="close-popup">&times;</span>
@@ -108,8 +125,3 @@
   </div>
 </div>
 {% endblock %}
-<scr>
-  function save_post_id(){
-
-  }
-</scr>

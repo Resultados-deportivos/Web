@@ -18,32 +18,37 @@ userProfile.addEventListener('click', function (event) {
     }
 
     event.stopPropagation(); // Prevent the document click event from immediately closing the list
-});
-}
-
-// Hide the user list when clicking outside of it
-document.addEventListener('click', function (event) {
+    });
+    // Hide the user list when clicking outside of it
+    document.addEventListener('click', function (event) {
     var isClickInside = userProfile.contains(event.target);
     if (!isClickInside) {
         userList.style.display = 'none';
     }
 });
+
+}
+
 const cards = document.querySelectorAll('.card');
 const popup = document.getElementById('popup');
 const popupTitle = document.getElementById('popup-title');
 const popupDescription = document.getElementById('popup-description');
 const closePopup = document.getElementById('close-popup');
 const imgPopup = document.getElementById('popup-img');
+const inputPopup = document.getElementById('input-popup');
 cards.forEach(card => {
     card.addEventListener('click', () => {
         const index = card.getAttribute('data-index');
         const title = card.getAttribute('data-title');
         const descripcion = card.getAttribute('data-descripcion');
         const img = card.getAttribute('data-img');
+        console.log(index);
+        console.log(title);
 
         imgPopup.src = `/static/img/publicaciones/${img}`;
         popupTitle.textContent = `${title}`;
         popupDescription.textContent = `${descripcion}`;
+        inputPopup.setAttribute('value', `${index}`);
         popup.style.display = 'flex';
         });
     });
@@ -51,31 +56,33 @@ cards.forEach(card => {
         popup.style.display = 'none';
     });
 console.log("ESTO FUNCIONA")
+
 // Pop-up if user not logged in
-const likeButton = document.getElementById("like-button-popup");
-const unlikeButton = document.getElementById("unlike-button-popup");
-const sendButton = document.getElementById("send-button-popup");
+const likeButton = document.querySelectorAll(".like-button-popup");
+const unlikeButton = document.querySelectorAll(".unlike-button-popup");
+const sendButton = document.querySelectorAll(".send-button-popup");
 const popupLogin = document.getElementById("popup-login");
 const closeLogPopup = document.getElementById('close-login-popup');
 
 
-
-likeButton.addEventListener("click", () => {
-    // Muestra el pop-up
+// Función para mostrar el pop-up de inicio de sesión
+function showLoginPopup() {
     popupLogin.style.display = "block";
+}
 
+// Agregar eventos a los botones
+likeButton.forEach(button => {
+    button.addEventListener("click", showLoginPopup);
 });
 
-unlikeButton.addEventListener("click", () => {
-
-    popupLogin.style.display = "block";
-  
+unlikeButton.forEach(button => {
+    button.addEventListener("click", showLoginPopup);
 });
 
-sendButton.addEventListener("click", () => {
-    popupLogin.style.display = "block";
-
+sendButton.forEach(button => {
+    button.addEventListener("click", showLoginPopup);
 });
+
 closeLogPopup.addEventListener('click', () => {
     popupLogin.style.display = 'none';
 });

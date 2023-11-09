@@ -99,7 +99,6 @@
     color: black ; 
     border-radius: 4px; 
     cursor: pointer;
-    margin-left: 5px; 
 
 }
 .like span,
@@ -153,7 +152,7 @@
     cursor: pointer;
     color:white;
  }
- #popup-login{
+#popup-login{
  }
 #popup-login a{
      color: #fd7600df;

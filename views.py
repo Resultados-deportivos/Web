@@ -4,11 +4,11 @@ from flash_manager import *
 from utilities import *
 from http import cookies
 import datetime
-from bs4 import BeautifulSoup
 
 
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
+publicacion = env.get_template('publicacion.html')
 competiciones = env.get_template('competiciones.html')
 equipos = env.get_template('equipos.html')
 partidos = env.get_template('eventos.html')
@@ -39,7 +39,6 @@ def page_index(environ, start_response):
         insert_coments_data(user_id=user_info['id'], publication_id=publication_id, description=str(comment[0]))
     publicaciones = get_posts()
     comments_list = get_comments()
-    likes_list = get_likes()
     response = index.render(user_info=user_info, publicaciones=publicaciones, comments_list=comments_list, css_name='inicio.css').encode(
         'utf-8')
     status = '200 OK'
@@ -49,6 +48,34 @@ def page_index(environ, start_response):
     return [response]
 
 
+def page_publicacion(environ, start_response):
+    global user_info
+    path = environ['PATH_INFO']
+    pubId = path.replace('/es/publicacion/', '')
+    reaccion_user_post = []
+    # check if la publicacion existe, si no -> 404
+    try:
+        pubId = int(pubId)
+        publicacion = get_posts(id=pubId)
+        if publicacion == []:
+            return handle_404
+
+    except ValueError:
+        return handle_404
+
+    comments_list = get_comments(publicacionid=pubId)
+    likesCount = get_likes_count(publicacionid=pubId)
+    # verify if the user is conected, if yes verify if he reacionado a la publicacion
+    if user_info:
+        reaccion_user_post = get_like(publicacionid=pubId, userid=user_info['id'])
+
+    response = publicacion.render(user_info=user_info, publicacion=publicacion, likesCount=likesCount,
+                                  comments_list=comments_list, reaccion_user_post=reaccion_user_post, css_name='publicacion.css').encode(
+        'utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    return [response]
 def page_competiciones(environ, start_response):
     global user_info
     competiciones_list = get_leagues()
@@ -94,13 +121,13 @@ def page_sign_in(environ, start_response):
 
     if environ['REQUEST_METHOD'] == 'POST':
         form_data = parse_post_data(environ)
-        email = form_data.get('email')
+        input_email = form_data.get('email')
         password = form_data.get('password')
-        print(email, password)
-        if (verify_user_login(str(email[0]), str(password[0]))) is not None:
+
+        if (verify_user_login(str(input_email[0]), str(password[0]))) is not None:
             print("ACCESS GRANTED")
 
-            user = get_users(correo=str(email[0]))
+            user = get_users(correo=str(input_email[0]))
             cookie = cookies.SimpleCookie()
 
             # Configurar la cookie de usuario
@@ -137,8 +164,7 @@ def page_forgot_password(environ, start_response):
     global verification_code
     global email
     verification_code = generate_verification_code()
-    response = forgot_pass.render().encode('utf-8')
-
+    status = '200 OK'
     if environ['REQUEST_METHOD'] == 'POST':
         form_data = parse_post_data(environ)
         email = form_data.get('email')
@@ -156,7 +182,7 @@ def page_forgot_password(environ, start_response):
         # En caso de que no sea una solicitud POST, mantener el estado 200 OK
         status = '200 OK'
         response_headers = []
-
+    response = forgot_pass.render().encode('utf-8')
     start_response(status, response_headers)
     return [response]
 
@@ -217,20 +243,17 @@ def page_sign_up(environ, start_response):
         email = form_data.get('email')
         password = form_data.get('password')
         conf_passwd = form_data.get('rep-password')
-        print(username, email, password)
-
-        # Checkeo que el email y el nombre de usuario no estan en la BD
+        # Obtenemos los usuarios con el mismo correo
         users = get_users(correo=str(email[0]))
-        # print(users)
-        if str(password[0]) == str(conf_passwd[0]):
-            if users == []:
+        # Si lista esta vacia
+        if not users:
+            # Compruebo que las contraseñas coinciden
+            if str(password[0]) == str(conf_passwd[0]):
                 insert_users_data(name=str(username[0]), password=str(password[0]), email=str(email[0]), isAdmin=False)
             else:
                 flash_manager.add_message("Las contraseñas no coinciden.", "error")
-                # Añadir mensaje de que el nombre de usuario o email ya se encuentran en uso
-                print("No se insertan los datos")
         else:
-            flash_manager.add_message("Las contraseñas no coinciden.", "error")
+            flash_manager.add_message("El correo ya está en uso.", "error")
             pass
     response = sign_up.render(css_name='login.css', flash_messages=flash_manager.get_messages()).encode('utf-8')
     start_response(status, response_headers)
@@ -294,6 +317,7 @@ def clear_cookie(cookie_name):
 
 
 def page_sign_out(environ, start_response):
+    """Sign out the user"""
     global user_info
     user_info = {}
     response = logout.render().encode('utf-8')
@@ -314,6 +338,7 @@ def page_sign_out(environ, start_response):
 
 
 def redirect_inicio(environ, start_response):
+    """Redirect to the home page"""
     response_headers = [('Location', '/es/inicio')]
     start_response('302 Found', response_headers)
     return []
@@ -327,7 +352,7 @@ def is_user_logged_in(environ):
         # You can check if the username and password are valid
         username = cookie['username'].value
         password = cookie['password'].value
-        return {username, password}  # Implement this function
+        return {username, password}
     else:
         return {}
 
@@ -340,11 +365,11 @@ def parse_post_data(environ):
 
 
 def serve_static(environ, start_response, path):
-    # Set the appropriate content type for CSS
+    # Set content type for CSS
     if path.endswith('.css'):
         content_type = 'text/css'
     else:
-        content_type = 'text/plain'  # Set a default content type for other static files
+        content_type = 'text/plain'
 
     try:
         with open('.' + path, 'rb') as file:
@@ -364,7 +389,7 @@ def serve_static_img(environ, start_response, path):
     if path.endswith('.png'):
         content_type = 'image/png'
     else:
-        content_type = 'text/plain'  # Set a default content type for other static files
+        content_type = 'text/plain'
 
     try:
         with open('.' + path, 'rb') as file:
@@ -384,7 +409,7 @@ def serve_static_js(environ, start_response, path):
     if path.endswith('.js'):
         content_type = 'application/javascript'
     else:
-        content_type = 'text/plain'  # Set a default content type for other static files
+        content_type = 'text/plain'
 
     try:
         with open('.' + path, 'rb') as file:

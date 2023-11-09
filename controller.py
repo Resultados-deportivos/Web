@@ -1,7 +1,6 @@
 from wsgiref.simple_server import make_server
 from views import *
 
-admin_is_logged = True
 
 def app(environ, start_response):
     path = environ.get('PATH_INFO')
@@ -11,6 +10,9 @@ def app(environ, start_response):
     # Inicio
     if path == '/es/inicio':
         return page_index(environ, start_response)
+    # Publicacion
+    elif path.startswith('/es/publicacion/'):
+        return page_publicacion(environ, start_response)
     # Competiciones
     elif path == '/es/competiciones':
         return page_competiciones(environ, start_response)
@@ -26,7 +28,7 @@ def app(environ, start_response):
     # Sign Up
     elif path == '/es/sign-up':
         return page_sign_up(environ, start_response)
-    #Sign Out
+    # Sign Out
     elif path == '/es/sign-out':
         return page_sign_out(environ, start_response)
     # Admin
@@ -34,10 +36,6 @@ def app(environ, start_response):
         return page_admin(environ, start_response)
     # Admin loged
     elif path.startswith('/es/admin/crud/'):
-        if not admin_is_logged:
-            response_headers = [('Location', '/es/inicio')]
-            start_response('302 Found', response_headers)
-            return []
         return page_crud(environ, start_response)
     # Admin Forgot Password
     elif path == '/recuperar_contrasena':
@@ -48,8 +46,8 @@ def app(environ, start_response):
         return set_new_password(environ, start_response)
     # Load CSS
     elif path == '/static/style.css' or path == '/static/inicio.css' or path == '/static/login.css' \
-            or path == '/static/eventos.css' or path == '/static/competiciones.css'\
-            or path == '/static/equipos.css' or path == '/static/crud.css' :
+            or path == '/static/eventos.css' or path == '/static/competiciones.css' \
+            or path == '/static/equipos.css' or path == '/static/crud.css':
         return serve_static(environ, start_response, path)
     # Load Folder /static/Img
     elif path.startswith('/static/img/'):

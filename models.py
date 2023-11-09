@@ -10,11 +10,10 @@ import requests
 from utilities import *
 from passlib.hash import sha256_crypt
 
-
 load_dotenv()  # Esto funciona para no tener credenciales guardadas en el propio codigo
 
 # api_url = "http://donostipub.eus/basket/"
-#api_url = "http://52.91.131.22/basket/"
+# api_url = "http://52.91.131.22/basket/"
 api_url = "http://localhost:8080/basket/"
 
 url = URL.create("postgresql", username=os.getenv('USERNAME_DATABASE'), password=os.getenv('PASSWORD_DATABASE'),
@@ -466,7 +465,7 @@ def get_leagues(id=None):
     return None
 
 
-def get_likes(usuarioid=None, publicacionid=None):
+"""def get_likes(usuarioid=None, publicacionid=None):
     endpoint_name = "likes"
     endpoint_params = {}
     if usuarioid is not None and publicacionid is None:
@@ -503,7 +502,45 @@ def get_likes(usuarioid=None, publicacionid=None):
                 print(f"Response code: {response.status_code}")
         except Exception as e:
             print(f"Error: {e}")
-    return None
+    return None"""
+
+
+def get_likes_count(publicacionid):
+    endpoint_name = "likesCount"
+    endpoint_params = {}
+    if publicacionid is None:
+        return []
+    else:
+        endpoint_params['id'] = publicacionid
+        try:
+            response = requests.get(api_url + endpoint_name, params=endpoint_params)
+            if response.status_code == 200:
+                data = response.json()
+                return data
+            else:
+                print(f"Response code: {response.status_code}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+def get_like(publicacionid, userid):
+    endpoint_name = "userlikes"
+    endpoint_params = {}
+    if publicacionid is None and userid is None:
+        return []
+    else:
+        endpoint_params['iduser'] = userid
+        endpoint_params['idpublicacion'] = publicacionid
+        try:
+            response = requests.get(api_url + endpoint_name, params=endpoint_params)
+            if response.status_code == 200:
+                data = response.json()
+                return data
+            else:
+                print(f"Response code: {response.status_code}")
+        except Exception as e:
+            print(f"Error: {e}")
+
 
 
 def get_posts(id=None, titulo=None):
@@ -774,7 +811,5 @@ def update_passwd(email, new_passwd):
 
 
 if __name__ == '__main__':
-    pass
-    '''
-        Code...
-    '''
+    print(get_likes_count(78))
+    print(get_like(publicacionid=1, userid=1))

@@ -1,15 +1,15 @@
 # pip freeze > requirements.txt (DELETE)
-jinja2
+jinja2~=3.1.2
 wsgiref
-requests
-SQLAlchemy
+requests~=2.31.0
+SQLAlchemy~=2.0.22
 base
 blinker
 certifi
 charset-normalizer
 click
 colorama
-Faker
+Faker~=19.12.0
 Flask
 greenlet
 idna
@@ -21,3 +21,6 @@ requests
 six
 urllib3
 Werkzeug
+
+python-dotenv~=1.0.0
+passlib~=1.7.4
