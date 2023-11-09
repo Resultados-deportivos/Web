@@ -4,6 +4,7 @@ from flash_manager import *
 from utilities import *
 from http import cookies
 import datetime
+import time
 
 
 env = Environment(loader=FileSystemLoader('templates'))
@@ -76,6 +77,8 @@ def page_publicacion(environ, start_response):
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     return [response]
+
+
 def page_competiciones(environ, start_response):
     global user_info
     competiciones_list = get_leagues()
@@ -209,7 +212,8 @@ def page_code(environ, start_response):
 
 
 def set_new_password(environ, start_response):
-    response = set_new_pass.render().encode('utf-8')
+    flash_manager = FlashMessageManager()
+    response = set_new_pass.render(flash_messages=flash_manager.get_messages()).encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     if environ['REQUEST_METHOD'] == 'POST':
@@ -221,12 +225,7 @@ def set_new_password(environ, start_response):
             update_passwd(str(email[0]), str(password[0]))
         else:
             status = '200 OK'
-            error_message = """
-            <script>
-                alert("Las contraseñas no coinciden. Por favor, inténtelo de nuevo.");
-            </script>
-            """
-            response = error_message.encode('UTF-8')
+            flash_manager.add_message("Las contraseñas no coinciden.", "error")
 
     start_response(status, response_headers)
     return [response]
@@ -327,11 +326,8 @@ def page_sign_out(environ, start_response):
     clear_password_cookie = clear_cookie('password')
     cookie_string_username = clear_username_cookie.output()
     cookie_string_password = clear_password_cookie.output()
-    response_headers = [('Set-Cookie', cookie_string_username),
-                        ('Set-Cookie', cookie_string_password)]
-
-    # response_headers.append(('Location', '/signin'))  # Cambia "/signin" al URL correcto de inicio de sesión
-
+    response_headers = [('Set-Cookie', cookie_string_username), ('Set-Cookie', cookie_string_password),
+                        ('Location', '/es/inicio')]
     status = '302 Found'
     start_response(status, response_headers)
     return [response]
