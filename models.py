@@ -14,7 +14,8 @@ from passlib.hash import sha256_crypt
 load_dotenv()  # Esto funciona para no tener credenciales guardadas en el propio codigo
 
 # api_url = "http://donostipub.eus/basket/"
-api_url = "https://donostipub.eus/basket/"
+#api_url = "http://52.91.131.22/basket/"
+api_url = "http://localhost:8080/basket/"
 
 url = URL.create("postgresql", username=os.getenv('USERNAME_DATABASE'), password=os.getenv('PASSWORD_DATABASE'),
                  host=os.getenv('HOST_DATABASE'), database=os.getenv('NAME_DATABASE'))
@@ -719,16 +720,23 @@ def get_users(id=None, nombre=None, correo=None, admin=None):
 
 
 def verify_user_login(email, passwd):
-    '''
+    """
         Esta def recibe el nombre de usuario y contraseña introducidos en el formulario de login
-    '''
-    user_data = get_users(correo=email)
-    print(user_data)
-    if user_data is not None:
-        if sha256_crypt.verify(passwd, user_data[0]['contrasena']):
-            return True
+    """
+    if get_users(correo=email) is not None:
+        user_data = get_users(correo=email)
+        if not user_data:
+            problema = "Error: No existe el usuario"
+            return None
         else:
-            return False
+            print(user_data)
+            if user_data is not None:
+                if sha256_crypt.verify(passwd, user_data[0]['contrasena']):
+                    return True
+                else:
+                    return None
+            else:
+                return None
 
 
 def forgot_password(user_email):

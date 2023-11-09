@@ -4,7 +4,8 @@ from flash_manager import *
 from utilities import *
 from http import cookies
 import datetime
-from tabulate import tabulate
+from bs4 import BeautifulSoup
+
 
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
@@ -25,8 +26,20 @@ user_info = {}
 
 def page_index(environ, start_response):
     global user_info
+
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        comment = form_data.get('comment')
+        publication_id = form_data.get('publication_id')
+        publication_id = int(publication_id[0])
+        print(user_info)
+        print(comment, publication_id)
+        print(user_info['id'])
+
+        insert_coments_data(user_id=user_info['id'], publication_id=publication_id, description=str(comment[0]))
     publicaciones = get_posts()
     comments_list = get_comments()
+    likes_list = get_likes()
     response = index.render(user_info=user_info, publicaciones=publicaciones, comments_list=comments_list, css_name='inicio.css').encode(
         'utf-8')
     status = '200 OK'
@@ -50,7 +63,8 @@ def page_competiciones(environ, start_response):
 def page_equipos(environ, start_response):
     global user_info
     equipos_list = get_teams()
-    response = equipos.render(user_info=user_info, equipos_list=equipos_list, css_name='equipos.css').encode('utf-8')
+    leagues_list = get_leagues()
+    response = equipos.render(user_info=user_info, equipos_list=equipos_list, leagues=leagues_list, css_name='equipos.css').encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
@@ -60,7 +74,6 @@ def page_equipos(environ, start_response):
 def page_partidos(environ, start_response):
     global user_info
     events = get_events()
-    tabulate(events)
     scores = get_points()
     leagues = get_leagues()
     estadios = get_stadiums()
@@ -84,7 +97,7 @@ def page_sign_in(environ, start_response):
         email = form_data.get('email')
         password = form_data.get('password')
         print(email, password)
-        if verify_user_login(str(email[0]), str(password[0])):
+        if (verify_user_login(str(email[0]), str(password[0]))) is not None:
             print("ACCESS GRANTED")
 
             user = get_users(correo=str(email[0]))
@@ -101,7 +114,9 @@ def page_sign_in(environ, start_response):
             # Agregar la cookie a las cabeceras de respuesta
             response_headers.append(('Set-Cookie', cookie_string))
             user_info['username'] = user[0]['nombre']
-            redirect_location = '/es/partidos'
+            user_info['id'] = user[0]['id']
+            user_info['email'] = user[0]['correo']
+            redirect_location = '/es/inicio'
         else:
             flash_manager.add_message("El usuario o contraseña no existen.", "error")
             print("ACCESS DENIED")

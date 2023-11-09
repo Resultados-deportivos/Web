@@ -30,6 +30,10 @@
 .publication-list {
     display: flex;
     flex-wrap: wrap;
+    height-max: 500px;
+}
+.publication-list .img{
+
 }
 
 .card {
@@ -41,11 +45,12 @@
     padding: 15px;
     flex: 1 1 1;
     width: 20%;
-    height: 5%;
+    height: 400px;
 }
 .card img{
-    width: 100%;
-    height: 30%;
+    width: auto;
+    max-width: 100%;
+    max-height: 200px;
 }
 .card h2 {
     font-size: 20px;
@@ -105,7 +110,6 @@
 
 .popup {
     display: none;
-    flex-direction: column;
     position: fixed;
     top: 0;
     left: 0;
@@ -114,27 +118,47 @@
     background: rgba(0, 0, 0, 0.7);
 }
 .popup-img{
-    max-width: 500px;
-    height:auto;
-}
-.popup img{
-    width: 100%;
-    height: 100%;
+    max-width: auto;
+    height: 200px;
 }
 
 .popup-content {
-            background: #fff;
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background: #fff;
+    width: 80%;
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
+.popup-img{
+    width: 48%;
+    height: 80%;
+    margin-right: 2%;
+}
+.popup-img img{
+    max-width: 100%;
+    height: 100%;
+}
+.popup-text{
+    width: 48%;
+    height: 80%;
+}
 .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 50px;
-            cursor: pointer;
-            color:white;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 50px;
+    cursor: pointer;
+    color:white;
  }
+ #popup-login{
+ }
+#popup-login a{
+     color: #fd7600df;
+     text-decoration: none;
+}
+#popup-login a:hover{
+    text-decoration: underline;
+}

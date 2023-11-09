@@ -5,16 +5,25 @@
 
 {% for competiciones in competiciones_list %}
 <div class="events-list">
-    <h1>{{ competiciones.nombre }} </h2>
+    <div class="titulo">
+        <h1>{{ competiciones.nombre }} </h2>
+            <h2>{{ competiciones.temporadaactual }}</h2>
+    </div>
+    <div>
         <img src="/static/img/leagues_logo/{{ competiciones.logo }}.png" alt="Logo {{ competiciones.nombre }}">
-    <div class="card">
-        <h2>{{ competiciones.temporadaactual }}</h2>
-        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }} </a>
-        <span class="material-symbols-outlined">youtube_activity</span>
-        </p>
-        <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }}</a>
-            <span class="material-symbols-outlined">public</span>
-        </p>
+    </div>
+
+    <div class="social-media">
+        <div class="web-equipo">
+            <div class="youtube-equipo">
+                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }} </a>
+                <span class="material-symbols-outlined">youtube_activity</span>
+            </div>
+            <div class="web-equipo">
+                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> {{ competiciones.nombre }}</a>
+                <span class="material-symbols-outlined">public</span>
+            </div>
+        </div>
     </div>
         
 </div>

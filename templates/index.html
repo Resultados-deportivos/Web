@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block maincontent %}
 
-  <div class="main-publication">
+  <div class="main-publication" data-id="{{ publicaciones[0]['id'] }}">
     <div class="img">
       <img src="/static/img/publicaciones/{{ publicaciones[0]['img'] }}" alt="Imagen publicación">
     </div>
@@ -18,10 +18,14 @@
       </button>
 
       <div class="comments">
-        <input id="input" type="text" placeholder="Escribe un comentario">
-        <button class="comment-send" id="send-button">
+        <form method="POST">
+          <input id="input" name="comment" type="text" placeholder="Escribe un comentario">
+          <input type="hidden" name="publication_id" value="{{ publicaciones[0]['id'] }}">
+          <button class="comment-send" id="send-button" type="submit">
           <span class="material-symbols-outlined">send</span>
-        </button>
+          </button>
+        </form>
+
 
       {% else %}
         <button class="like" id="like-button-popup">
@@ -72,7 +76,7 @@
     <div class="popup-img">
       <img id="popup-img" src="" alt="Imagen publicación">
     </div>
-    <div class="popup-content">
+    <div class="popup-text">
       <div class="popup-description">
         <h1 id="popup-title"></h1>
         <p id="popup-description"></p>
@@ -91,7 +95,6 @@
           </button>
         </div>
       </div>
-      <div></div>
     </div>
     <span class="close" id="close-popup">&times;</span>
   </div>
@@ -105,4 +108,8 @@
   </div>
 </div>
 {% endblock %}
+<scr>
+  function save_post_id(){
 
+  }
+</scr>
