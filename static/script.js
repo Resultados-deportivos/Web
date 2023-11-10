@@ -37,6 +37,7 @@ const closePopup = document.getElementById('close-popup');
 const imgPopup = document.getElementById('popup-img');
 const inputPopup = document.getElementById('input-popup');
 
+/*
 cards.forEach(card => {
     card.addEventListener('click', () => {
         const index = card.getAttribute('data-index');
@@ -57,8 +58,20 @@ cards.forEach(card => {
             popup.style.display = 'none';
         });
     }
+    */
+cards.forEach(card => {
+  card.addEventListener('click', () => {
+    const index = card.getAttribute('data-index');
+    window.location.href = `/es/publicacion/${index}`;
+  });
+});
+
+closePopup.addEventListener('click', () => {
+  popup.style.display = 'none';
+});
     
 console.log("ESTO FUNCIONA")
+/*
 
 // Pop-up if user not logged in
 const likeButton = document.querySelectorAll(".like-button-popup");
@@ -85,7 +98,33 @@ unlikeButton.forEach(button => {
 sendButton.forEach(button => {
     button.addEventListener("click", showLoginPopup);
 });
+*/
+// Pop-up if user not logged in
+const likeButton = document.querySelector('.like');
+const dislikeButton = document.querySelector('.dislike');
+const sendButton = document.querySelectorAll(".comment-send");
+const popupLogin = document.getElementById("popup-login");
+const closeLogPopup = document.getElementById('close-login-popup');
 
+// Function to add a class to the clicked button and remove it from the other button
+function highlightButton(button) {
+  const otherButton = button === likeButton ? dislikeButton : likeButton;
+  button.classList.add('clicked');
+  otherButton.classList.remove('clicked');
+}
+
+// Event listeners for like and dislike buttons
+likeButton.addEventListener('click', function () {
+  highlightButton(this);
+  // Add logic here to handle the like action
+  // You can make an AJAX request or update the UI accordingly
+});
+
+dislikeButton.addEventListener('click', function () {
+  highlightButton(this);
+  // Add logic here to handle the dislike action
+  // You can make an AJAX request or update the UI accordingly
+});
 closeLogPopup.addEventListener('click', () => {
     popupLogin.style.display = 'none';
 });

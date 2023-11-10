@@ -1,10 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!-- publicacion.html -->
+{% extends "base.html" %}
+{% block maincontent %}
+<!-- paramters
+user_info,
+post,
+likesCount,
+comments_list,
+reaccion_user_post
+-->
+<!-- Content for publicacion page -->
+<div class="publicacion-content">
+    <div class="publicacion-details">
+        <h1>{{ post['titulo'] }}</h1>
+        <div class="publicacion-image">
+            <img src="/static/img/publicaciones/{{ post['img'] }}" alt="Publicacion Image">
+        </div>
+        <p>{{ post['descripcion'] }}</p>
+        <!-- Add any other details you want to display on the publicacion page -->
+    </div>
+    <div class="reactions">
+        {% if user_info %}
+        <!-- Like button -->
+        <form method="POST">
+            <input type="hidden" name="publication_id" value="{{ post['id'] }}">
+            <button
+                class="like {% if reaccion_user_post and reaccion_user_post[0]['likecount'] == 1 %}clicked{% endif %}"
+                name="like-button" type="submit">
+                <span class="material-symbols-outlined">thumb_up</span>
+            </button>
+        </form>
 
-</body>
-</html>
+        <!-- Dislike button -->
+        <form method="POST">
+            <input type="hidden" name="publication_id" value="{{ post['id'] }}">
+            <button
+                class="dislike {% if reaccion_user_post and reaccion_user_post[0]['likecount'] == 0 %}clicked{% endif %}"
+                name="dislike-button" type="submit">
+                <span class="material-symbols-outlined">thumb_down</span>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="comments">
+        <!-- Comment section here -->
+        <div class="comment-list">
+            {% for comment in comments_list %}
+            <div class="comment">
+                <p>{{ comment['descripcion'] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% if user_info %}
+        <form method="POST">
+            <input name="comment" type="text" placeholder="Escribe un comentario">
+            <input type="hidden" name="publication_id" value="{{ post['id'] }}">
+            <button class="comment-send" id="send-button" type="submit">
+                <span class="material-symbols-outlined">send</span>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

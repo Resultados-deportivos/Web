@@ -50,14 +50,32 @@ def page_index(environ, start_response):
 
 def page_publicacion(environ, start_response):
     global user_info
+
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        comment = form_data.get('comment')
+        publication_id = form_data.get('publication_id')
+        publication_id = int(publication_id[0])
+        # print(user_info)
+        # print(comment, publication_id)
+        # print(user_info['id'])
+
+        # Check if the user is logged in
+        if user_info:
+            # Check if the like or dislike button is clicked
+            if 'like-button' in form_data:
+                handle_like_action(publication_id, user_info['id'])
+            elif 'dislike-button' in form_data:
+                handle_dislike_action(publication_id, user_info['id'])
+
     path = environ['PATH_INFO']
     pubId = path.replace('/es/publicacion/', '')
     reaccion_user_post = []
     # check if la publicacion existe, si no -> 404
     try:
         pubId = int(pubId)
-        publicacion = get_posts(id=pubId)
-        if publicacion == []:
+        post = get_posts(id=pubId)
+        if post == []:
             return handle_404
 
     except ValueError:
@@ -65,17 +83,57 @@ def page_publicacion(environ, start_response):
 
     comments_list = get_comments(publicacionid=pubId)
     likesCount = get_likes_count(publicacionid=pubId)
+    post = post[0]
+
+    print("post : ", post)
+    print("comments_list : ", comments_list)
+    print("likesCount : ", likesCount)
+
     # verify if the user is conected, if yes verify if he reacionado a la publicacion
     if user_info:
         reaccion_user_post = get_like(publicacionid=pubId, userid=user_info['id'])
 
-    response = publicacion.render(user_info=user_info, publicacion=publicacion, likesCount=likesCount,
-                                  comments_list=comments_list, reaccion_user_post=reaccion_user_post, css_name='publicacion.css').encode(
+    response = publicacion.render(user_info=user_info, post=post, likesCount=likesCount,
+                                  comments_list=comments_list, reaccion_user_post=reaccion_user_post,
+                                  css_name='publicacion.css').encode(
         'utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     return [response]
+
+
+# Helper functions for handling like and dislike actions
+def handle_like_action(publication_id, user_id):
+    existing_reaction = get_like(publicacionid=publication_id, userid=user_id)
+
+    if existing_reaction:
+        # The user already has a reaction, so we need to toggle it
+        if existing_reaction[0]['likecount'] == 1:
+            # User liked before, now toggle to delete the like
+            delete_like(existing_reaction[0]['id'])
+        else:
+            # User disliked before, now toggle to like
+            update_like(existing_reaction[0]['id'], 1)
+    else:
+        # The user has no previous reaction, so insert a new like
+        insert_likes_data(publication_id=publication_id, user_id=user_id, like_count=1)
+
+
+def handle_dislike_action(publication_id, user_id):
+    existing_reaction = get_like(publicacionid=publication_id, userid=user_id)
+
+    if existing_reaction:
+        # The user already has a reaction, so we need to toggle it
+        if existing_reaction[0]['likecount'] == 0:
+            # User disliked before, now toggle to delete the dislike
+            delete_like(existing_reaction[0]['id'])
+        else:
+            # User liked before, now toggle to dislike
+            update_like(existing_reaction[0]['id'], 0)
+    else:
+        # The user has no previous reaction, so insert a new dislike
+        insert_likes_data(publication_id=publication_id, user_id=user_id, like_count=0)
 
 
 def page_competiciones(environ, start_response):
