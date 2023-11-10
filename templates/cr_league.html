@@ -1,0 +1,19 @@
+{% extends "crear.html" %}
+{% block title %}LIGA{% endblock title %}LIGA
+{% block content_league %}
+<div class="container">
+    <form id="forgot" method="post" >
+        <label for="code">CREAR LIGA</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre Liga">
+        <label for="logo">Introduzca el nombre de la foto del logo:</label>
+        <input type="text" id="logo" name="logo" placeholder="logo.png">
+        <label for="temp_actual">Escoja la temporada actual:</label>
+        <input type="number" id="temp_actual" name="temp_actual">
+        <label for="yt">Escriba la URL del canal de Youtube:</label>
+        <input type="url" id="yt" name="yt" placeholder="https://youtube.com/watch_me" pattern="https://.*" size="30">
+        <label for="web">Introduce la URL de la Web</label>
+        <input type="url" id="web" name="web" placeholder="https://example.com" pattern="https://.*">
+        <button type="submit">Crear</button>
+    </form>
+</div>
+{% endblock %}

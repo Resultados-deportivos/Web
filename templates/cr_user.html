@@ -1,0 +1,17 @@
+    {% extends "crear.html" %}
+    {% block title %}USUARIO{% endblock title %}USUARIO
+    {% block content_user %}
+    <div class="container">
+        <form id="forgot" method="post" >
+            <label for="code">CREAR USUARIO</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre">
+            <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña">
+            <div class="isAdmin">
+                <label id="lblAdmin">ADMIN</label>
+                <input type="checkbox" id="admin" name="admin">
+            </div>
+            <input type="email" id="correo" name="correo" placeholder="test@gmail.com">
+            <button type="submit">Crear</button>
+        </form>
+    </div>
+    {% endblock %}

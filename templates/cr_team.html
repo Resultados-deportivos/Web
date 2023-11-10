@@ -1,0 +1,23 @@
+{% extends "crear.html" %}
+{% block title %}EQUIPO{% endblock title %}EQUIPO
+{% block content_team %}
+<div class="container">
+    <form id="forgot" method="post" >
+        <label for="code">CREAR EQUIPO</label>
+        <label for="nombre">Introduce un nombre:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre">
+        <label for="ciudad">Introduce la ciudad a la que pertenece el equipo:</label>
+        <input type="text" id="ciudad" name="ciudad" placeholder="Ciudad">
+        <label for="logo">Introduce el nombre del archivo que contiene el logo para el equipo:</label>
+        <input type="text" id="logo" name="logo">
+        <label for="liga">Selecciona la liga en la que participa el equipo:</label>
+        <select name="liga" id="liga">
+            <option value="default">Seleccione una liga</option>
+            {% for liga in ligas %}
+                <option value="{{liga.nombre}}">{{liga.nombre}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Crear</button>
+    </form>
+</div>
+{% endblock %}

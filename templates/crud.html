@@ -2,32 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Administrador</title>
+    <title>Panel de Admin</title>
+</head>
+<body>
     <link rel="stylesheet" href="/static/crud.css">
     <link rel="shortcut icon" href="/static/img/admin-icon.png" type="image/x-icon">
 </head>
 <body>
-    <h1>Usuarios</h1>
-    <table>
-        <thead>
+<h1>Usuarios</h1>
+<a href="/crear" class="create-button">CREAR USUARIO</a>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
             <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo</th>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.correo }}</td>
+                <td>
+                    <a href="/editar_usuario/{{ usuario.id }}" class="edit-button">EDIT</a> |
+                    <a href="/eliminar_usuario/{{ usuario.id }}" class="delete-button">DELETE</a> |
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            {% for usuario in usuarios %}
-                <tr>
-                    <td>{{ usuario.id }}</td>
-                    <td>{{ usuario.nombre }}</td>
-                    <td>{{ usuario.correo }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        {% endfor %}
+    </tbody>
+</table>
+
 
     <h1>Competiciones</h1>
+    <a href="/crear_competicion" class="create-button">CREAR COMPETICION</a>
     <table>
         <thead>
             <tr>
@@ -37,6 +47,7 @@
                 <th>Temporada Actual</th>
                 <th>Youtube</th>
                 <th>Web</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -48,12 +59,17 @@
                     <td>{{ competicion.temporadaactual }}</td>
                     <td>{{ competicion.youtube }}</td>
                     <td>{{ competicion.web }}</td>
+                    <td>
+                        <a href="/editar_competicion/{{ competicion.id }}" class="edit-button">EDIT</a> |
+                        <a href="/eliminar_competicion/{{ competicion.id }}" class="delete-button">DELETE</a> |
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
     <h1>Equipos</h1>
+    <a href="/crear_equipo" class="create-button">CREAR EQUIPO</a>
     <table>
         <thead>
             <tr>
@@ -61,19 +77,22 @@
                 <th>Nombre</th>
                 <th>Ciudad</th>
                 <th>Logo (url)</th>
-                <th>Youtube</th>
                 <th>Id Liga (FK)</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for competicion in competiciones %}
+            {% for equipo in equipos %}
                 <tr>
-                    <td>{{ competicion.id }}</td>
-                    <td>{{ competicion.nombre }}</td>
-                    <td>{{ competicion.ciudad }}</td>
-                    <td>{{ competicion.logo }}</td>
-                    <td>{{ competicion.youtube }}</td>
-                    <td>{{ competicion.id_liga }}</td>
+                    <td>{{ equipo.id }}</td>
+                    <td>{{ equipo.nombre }}</td>
+                    <td>{{ equipo.ciudad }}</td>
+                    <td>{{ equipo.logo }}</td>
+                    <td>{{ equipo.id_liga }}</td>
+                    <td>
+                        <a href="/editar_competicion/{{ equipo.id }}" class="edit-button">EDIT</a> |
+                        <a href="/eliminar_competicion/{{ equipo.id }}" class="delete-button">DELETE</a> |
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -81,6 +100,7 @@
     
 
     <h1>Partidos</h1>
+    <a href="/crear_partido" class="create-button">CREAR PARTIDOS</a>
     <table>
         <thead>
             <tr>
@@ -92,6 +112,7 @@
                 <th>Temporada</th>
                 <th>Estadio (FK)</th>
                 <th>Liga (FK)</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -106,12 +127,17 @@
                     <td>{{ partido.temporada }}</td>
                     <td>{{ partido.idestadios }}</td>
                     <td>{{ partido.idliga }}</td>
+                    <td>
+                        <a href="/editar_partido/{{ partido.id }}" class="edit-button">EDIT</a> |
+                        <a href="/eliminar_partido/{{ partido.id }}" class="delete-button">DELETE</a> |
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
     <h1>Publicaciones</h1>
+    <a href="/crear_publicacion" class="create-button">CREAR PUBLICACION</a>
     <table>
         <thead>
             <tr>
@@ -119,6 +145,7 @@
                 <th>Img (Ruta)</th>
                 <th>Titúlo</th>
                 <th>Descripción</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -128,18 +155,24 @@
                     <td>{{ post.img }}</td>
                     <td>{{ post.titulo }}</td>
                     <td>{{ post.descripcion }}</td>
+                    <td>
+                        <a href="/editar_publicacion/{{ post.id }}" class="edit-button">EDIT</a> |
+                        <a href="/eliminar_publicacion/{{ post.id }}" class="delete-button">DELETE</a> |
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
     <h1>Comentarios</h1>
+    <a href="/crear_comentario" class="create-button">CREAR COMENTARIO</a>
     <table>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Publicacion (FK)</th>
                 <th>Descripción</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -148,35 +181,14 @@
                     <td>{{ comment.id }}</td>
                     <td>{{ comment.publicacionid }}</td>
                     <td>{{ comment.descripcion }}</td>
+                    <td>
+                        <a href="/editar_comentario/{{ comment.id }}" class="edit-button">EDIT</a> |
+                        <a href="/eliminar_comentario/{{ comment.id }}" class="delete-button">DELETE</a> |
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <!-- <h1>Likes</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            [{"id":2,"idusuario":2,"publicacionid":1,"descripcion":"Ese mate fue inolvidable."},{"id":3,"idusuario":3,
-            "publicacionid":2,"descripcion":"LeBron es una máquina en la cancha."},
-
-            {% for like in likes_list %}
-            [{"id":3,"publicacionid":2,"usuarioid":3,"likecount":1}
-                <tr>
-                    <td>{{ like.id }}</td>
-                    <td>{{ like.publicacionid }}</td>
-                    <td>{{ like.usuarioid }}</td>
-                    <td>{{ like.likecount }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table> -->
 
 </body>
 </html>

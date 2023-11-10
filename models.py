@@ -12,9 +12,9 @@ from passlib.hash import sha256_crypt
 
 load_dotenv()  # Esto funciona para no tener credenciales guardadas en el propio codigo
 
-api_url = "http://api.donostipub.eus/basket/"
-#api_url = "http://52.91.131.22/basket/"
-# api_url = "http://localhost:8080/basket/"
+# api_url = "http://api.donostipub.eus/basket/"
+# api_url = "http://52.91.131.22/basket/"
+api_url = "http://localhost:8081/basket/"
 
 url = URL.create("postgresql", username=os.getenv('USERNAME_DATABASE'), password=os.getenv('PASSWORD_DATABASE'),
                  host=os.getenv('HOST_DATABASE'), database=os.getenv('NAME_DATABASE'))

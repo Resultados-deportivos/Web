@@ -1,0 +1,153 @@
+{% extends "crear.html" %}
+{% block content_ls_post %}
+<table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Imagen</th>
+                <th>Titulo</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+            <tr id="ID_{{post.id}}">
+                <td>{{post.id}}</td>
+                <td id="Nombre_Imagen_{{post.id}}" ondblclick="editCell('Nombre_Imagen', {{post.id}})">{{post.img}}</td>
+                <td id="Titulo_{{post.id}}" ondblclick="editCell('Titulo', {{post.id}})">{{post.titulo}}</td>
+                <td id="Descripcion_{{post.id}}" ondblclick="editCell('Descripcion', {{post.id}})">{{post.descripcion}}</td>
+                <td class="actions">
+                    <button class="delete" onclick="deleteData({{post.id}})">Eliminar</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+<script>
+    //PUT
+    function editCell(column, id){
+        const selected_cell = document.getElementById(`${column}_${id}`);
+        const currentValue = selected_cell.textContent;
+        const img = document.getElementById(`Nombre_Imagen_${id}`);
+        const titulo = document.getElementById(`Titulo_${id}`)
+        const descripcion = document.getElementById(`Descripcion_${id}`)
+        
+        const fields = {
+             Img: img.textContent,
+             Titulo: titulo.textContent,
+             Descripcion: descripcion.textContent,
+            
+        }
+
+        if (column in fields) {
+            
+            const newValue = prompt(`Editar ${column}:`, currentValue);
+        
+            if (newValue !== null && newValue !== currentValue) {
+
+                delete fields[column];
+        
+                
+                fields[column] = newValue;
+                
+                const db_fields = {
+                    img: fields['Img'],
+                    titulo: fields['Titulo'],
+                    descripcion: fields['Descripcion'],
+                   
+                }
+
+                console.log(db_fields['img'])
+                console.log(db_fields['titulo'])
+                console.log(db_fields['descripcion'])
+                
+                
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+
+                var raw = JSON.stringify(db_fields)
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                }
+
+                fetch(`http://api.donostipub.eus/basket/posts/${id}`, requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message)
+                    if (data.message !== "") {
+                        alert('Datos actualizados con exito')
+                        selected_cell.textContent = newValue;
+                    
+                    } else {
+                        alert('Error al actualizar en el servidor.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            }
+        } else {
+           
+            console.error('La celda seleccionada no es una clave en el objeto fields.');
+        }
+    }
+
+    //DELETE
+    function deleteData(id){
+        const dataTable = document.getElementById("dataTable")
+
+        var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+        
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        }
+
+        fetch(`http://api.donostipub.eus/basket/posts/${id}`, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message !== "") {
+                // Realizar acciones adicionales si la eliminación en el servidor fue exitosa
+                alert('Eliminación exitosa');
+                const deletedRow = document.querySelector(`#ID_${id}`);
+                console.log(`ID_${id}`)
+                deletedRow.style.display = "none";
+                                
+            } else {
+                console.error('Error al eliminar en el servidor.');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error)
+    })
+}
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const dataTable = document.getElementById("dataTable");
+
+        searchInput.addEventListener("input", function () {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            Array.from(dataTable.rows).forEach(function (row, index) {
+                if (index !== 0) { // Ignora la primera fila (encabezados)
+                    const rowData = Array.from(row.cells).map(cell => cell.textContent.toLowerCase());
+                    const match = rowData.some(data => data.includes(searchTerm));
+                    row.style.display = match ? "" : "none";
+                }
+            });
+        });
+
+        // Resto de tu script...
+    });
+</script>
+
+{% endblock  %}

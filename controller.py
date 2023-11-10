@@ -35,8 +35,42 @@ def app(environ, start_response):
     elif path == '/es/admin':
         return page_admin(environ, start_response)
     # Admin loged
-    elif path.startswith('/es/admin/crud/'):
+    elif path.startswith('/es/admin/crud/cr_user'):
         return page_crud(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/cr_team'):
+        return page_crud_team(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/cr_league'):
+        return page_crud_league(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/cr_post'):
+        return page_crud_post(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/cr_player'):
+        return page_crud_player(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/cr_evento'):
+        return page_crud_evento(environ, start_response)
+
+    # LISTAS
+    elif path.startswith('/es/admin/crud/ls_evento'):
+        return page_crud_ls_evento(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/ls_league'):
+        return page_crud_ls_league(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/ls_player'):
+        return page_crud_ls_player(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/ls_post'):
+        return page_crud_ls_post(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/ls_team'):
+        return page_crud_ls_team(environ, start_response)
+
+    elif path.startswith('/es/admin/crud/ls_user'):
+        return page_crud_ls_user(environ, start_response)
     # Admin Forgot Password
     elif path == '/recuperar_contrasena':
         return page_forgot_password(environ, start_response)
@@ -62,7 +96,7 @@ def app(environ, start_response):
 
 if __name__ == "__main__":
     host = 'localhost'
-    port = 8081
+    port = 8080
     httpd = make_server(host, port, app)
     print(f"Servidor en http://{host}:{port}")
     httpd.serve_forever()

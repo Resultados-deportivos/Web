@@ -1,0 +1,16 @@
+{% extends "crear.html" %}
+{% block title %}PUBLICACION{% endblock title %}PUBLICACION
+{% block content_post %}
+<div class="container">
+    <form id="forgot" method="post" >
+        <label for="code">CREAR PUBLICACION</label>
+        <label for="img">Inserta el nombre de una imagen:</label>
+        <input type="text" id="img" name="img" placeholder="logo.png">
+        <label for="titulo">Introduce el titulo de la publicación</label>
+        <input type="text" id="titulo" name="titulo" placeholder="El gran mate de Lebron...">
+        <label for="descripcion">Introduce una breve descripción de la publicación:</label>
+        <textarea name="descripcion" id="descripcion" cols="25" rows="5"></textarea>
+        <button type="submit">Crear</button>
+    </form>
+</div>
+{% endblock %}

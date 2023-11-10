@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREAR {% block title %}{% endblock title %}</title>
+    <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+        }
+        
+
+        
+        
+        .container{
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 50vh;
+            margin: auto;
+            text-align: center;
+        }
+        
+        form{
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            padding: 5vh;
+            justify-content: center;
+            align-content: center;
+        }
+        
+        label{
+            text-align: center;
+            font-size: 14pt;
+            font-family: 'Calibri';
+            padding-bottom: 3vh;
+        }
+
+        input {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 3vh;
+            border: 2px solid orange;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 300px;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            border-color: darkorange;
+        }
+        
+        button{
+            width: 15vh;
+            align-self: center;
+            background-color: orange;
+            color: white;
+            padding: 10px 2px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover{
+            background-color: darkorange;
+        }
+
+        #email_button{
+            width: 20vh;
+        }
+
+        .isAdmin{
+            display: flex;
+            justify-content: center;
+        }
+
+        #lblAdmin{
+            font-size: 10pt;
+        }
+
+        
+
+        .sidebar {
+            left: -35vh; /* Inicialmente oculto */
+            width: 36vh;
+            height: 100vh;
+            background-color: darkorange;
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            z-index: 1;
+            transition: left 0.7s;
+            overflow-x: hidden; /* Disable horizontal scroll */
+            padding-top: 20px;
+        }
+        
+        .sidebar:hover {
+            left: 0; /* Mostrar el sidebar cuando el ratón se acerca */
+        }
+        
+        
+        li{
+            list-style: none;
+            margin-top: 10vh;
+            text-align: left;
+            margin-right: 7vh;
+        }
+
+        li:hover{
+            scale: 1.2;
+        }
+
+        a{
+            color: black;
+            text-decoration: none;
+            font-family: 'Calibri';  
+            font-weight: bold;
+        }
+
+        i{
+            margin-right: 1em;
+        }
+
+        h1{
+            font-family: 'Calibri';
+            margin-right: 30%;
+            text-align: center;
+            font-size: 25 pt;
+        }
+
+        select{
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 3vh;
+            border: 2px solid orange;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 300px;
+            transition: border 0.3s;
+        }
+
+        select:hover{
+            border-color: darkorange;
+        }
+
+        textarea{
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 3vh;
+            border: 2px solid orange;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 300px;
+            transition: border 0.3s;
+        }
+
+        textarea:hover{
+            border-color: darkorange;
+        }
+
+
+        
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: orange;
+            min-width: 100px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            padding: 5%;
+            border-radius: 5px;
+            font-size: 8pt;
+            text-align: center;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content:hover{
+            background-color: orangered;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            color: #333; /* Cambia el color de texto según tus preferencias */
+        }
+
+        .dropdown-item:hover {
+            background-color: #f2f2f2; /* Cambia el color de fondo al pasar el ratón */
+        }
+
+        
+
+        table {
+            width: 70%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .edit, .delete {
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        .edit {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .delete {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #searchInput{
+            margin-top: 3vh;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <ul>
+            <li class="dropdown">
+                <a href="http://localhost:8080/es/admin/crud/cr_user">
+                    <i class="fa-solid fa-address-card"></i> USUARIOS
+                </a>
+                <div class="dropdown-content">
+                    <a href="http://localhost:8080/es/admin/crud/ls_user">LISTAR USUARIOS</a>
+                    <!-- Puedes agregar más enlaces aquí -->
+                </div>
+            </li>
+
+            <li class="dropdown">
+                <a href="http://localhost:8080/es/admin/crud/cr_team">
+                    <i class="fa-solid fa-users"></i> EQUIPOS
+                </a>
+                <div class="dropdown-content">
+                    <a href="http://localhost:8080/es/admin/crud/ls_team">LISTAR EQUIPOS</a>
+                    
+                </div>
+            </li>
+            
+            <li class="dropdown">
+                <a href="http://localhost:8080/es/admin/crud/cr_league">
+                    <i class="fa-solid fa-trophy"></i> LIGAS
+                </a>
+                <div class="dropdown-content">
+                    <a href="http://localhost:8080/es/admin/crud/ls_league">LISTAR LIGAS</a>
+                    
+                </div>
+            </li>
+            
+            <li class="dropdown">
+                <a href="http://localhost:8080/es/admin/crud/cr_post">
+                    <i class="fa-solid fa-layer-group"></i> PUBLICACIONES
+                </a>
+                <div class="dropdown-content">
+                    <a href="http://localhost:8080/es/admin/crud/ls_post">LISTAR PUBLICACIONES</a>
+                    
+                </div>
+            </li>
+            
+            <li class="dropdown">
+                <a href="http://localhost:8080/es/admin/crud/cr_player">
+                    <i class="fa-solid fa-user fa-bounce"></i> JUGADORES
+                </a>
+                <div class="dropdown-content">
+                    <a href="http://localhost:8080/es/admin/crud/ls_player">LISTAR JUGADORES</a>
+                    
+                </div>
+            </li>
+            
+            <li class="dropdown">
+                <a href="http://localhost:8080/es/admin/crud/cr_evento">
+                    <i class="fa-solid fa-calendar-days"></i> EVENTOS
+                </a>
+                <div class="dropdown-content">
+                    <a href="http://localhost:8080/es/admin/crud/ls_evento">LISTAR EVENTOS</a>
+                    
+                </div>
+            </li>
+            
+        </ul>
+    </aside>
+    {% if url == '/cr_user' %}
+        
+        {% block content_user %}
+
+        {% endblock content_user %}
+    {% elif url == '/cr_team' %}
+        {% block content_team %}
+
+        {% endblock content_team %}
+    {% elif url == '/cr_league' %}
+        {% block content_league %}
+
+        {% endblock content_league %}
+    {% elif url == '/cr_player' %}
+        {% block content_player %}
+
+        {% endblock content_player %}
+    {% elif url == '/cr_post' %}
+        {% block content_post %}
+
+        {% endblock content_post %}
+    {% elif url == '/cr_evento' %}
+        {% block content_event %}
+
+        {% endblock content_event %}
+    
+    <!--AQUI ES PARA LAS LISTAS-->
+    {% elif url == '/ls_team' %}
+        <input type="text" placeholder="FILTER" id="searchInput">
+        {% block content_ls_team %}
+
+        {% endblock content_ls_team %}
+    {% elif url == '/ls_league' %}
+    <input type="text" placeholder="FILTER" id="searchInput">
+        {% block content_ls_league %}
+
+        {% endblock content_ls_league %}
+    {% elif url == '/ls_player' %}
+    <input type="text" placeholder="FILTER" id="searchInput">
+        {% block content_ls_player %}
+
+        {% endblock content_ls_player %}
+    {% elif url == '/ls_post' %}
+    <input type="text" placeholder="FILTER" id="searchInput">
+        {% block content_ls_post %}
+
+        {% endblock content_ls_post %}
+    {% elif url == '/ls_evento' %}
+    <input type="text" placeholder="FILTER" id="searchInput">
+        {% block content_ls_evento %}
+
+        {% endblock content_ls_evento %}
+    {% elif url == '/ls_user' %}
+    <input type="search" placeholder="FILTER" id="searchInput">
+        {% block content_ls_user  %}
+        
+        {% endblock content_ls_user  %}
+
+
+    {% endif %}
+    <script>
+        // Selecciona el elemento del sidebar
+        const sidebar = document.querySelector('.sidebar');
+        const dataTable = document.getElementById('dataTable')
+        const windowSize = document.body.clientWidth
+        var sidebarWidth = sidebar.clientWidth
+        
+
+        // Agrega un controlador de eventos para ocultar el sidebar cuando el ratón se aleja
+        sidebar.addEventListener('mouseleave', () => {
+            sidebar.style.left = '-35vh'; // Oculta el sidebar
+            dataTable.style.marginLeft = `0px`
+        });
+
+        sidebar.addEventListener('mouseenter', () => {
+            sidebar.style.left = '0'; // Oculta el sidebar
+            dataTable.style.marginLeft = `${sidebarWidth}px`
+        });
+    </script>
+    
+</body>
+</html>

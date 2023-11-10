@@ -1,0 +1,167 @@
+{% extends "crear.html" %}
+{% block content_ls_player %}
+<table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Fecha de Nacimiento</th>
+                <th>ID Equipo</th>
+                <th>Altura</th>
+                <th>Peso</th>
+                <th>Número</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for player in players %}
+            <tr id="ID_{{player.id}}">
+                <td>{{player.id}}</td>
+                <td id="Nombre_{{player.id}}" ondblclick="editCell('Nombre', {{player.id}})">{{player.nombre}}</td>
+                <td id="Apellido_{{player.id}}" ondblclick="editCell('Apellido', {{player.id}})">{{player.apellido}}</td>
+                <td id="Fecha_de_Nacimiento_{{player.id}}" ondblclick="editCell('Fecha_de_Nacimiento', {{player.id}})">{{player.fechanacim}}</td>
+                <td id="ID_Equipo_{{player.id}}" ondblclick="editCell('ID_Equipo', {{player.id}})">{{player.equipoid}}</td>
+                <td id="Altura_{{player.id}}" ondblclick="editCell('Altura', {{player.id}})">{{player.altura}}</td>
+                <td id="Peso_{{player.id}}" ondblclick="editCell('Peso', {{player.id}})">{{player.peso}}</td>
+                <td id="Numero_{{player.id}}" ondblclick="editCell('Numero', {{player.id}})">{{player.numero}}</td>
+                <td class="actions">
+                    <button class="delete" onclick="deleteData({{player.id}})">Eliminar</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+<script>
+    //PUT
+    function editCell(column, id){
+        const selected_cell = document.getElementById(`${column}_${id}`);
+        const currentValue = selected_cell.textContent;
+        const nombre = document.getElementById(`Nombre_${id}`);
+        const apellido = document.getElementById(`Apellido_${id}`)
+        const fechanacim = document.getElementById(`Fecha_de_Nacimiento_${id}`)
+        const equipoid = document.getElementById(`ID_Equipo_${id}`)
+        const altura = document.getElementById(`Altura_${id}`)
+        const peso = document.getElementById(`Peso_${id}`)
+        const numero = document.getElementById(`Numero_${id}`)
+       
+        
+        const fields = {
+             Nombre: nombre.textContent,
+             Apellido: apellido.textContent,
+             Fecha_de_Nacimiento: fechanacim.textContent,
+             ID_Equipo: equipoid.textContent,
+             Altura: altura.textContent,
+             Peso: peso.textContent,
+             Numero: numero.textContent
+        }
+
+        if (column in fields) {
+            
+            const newValue = prompt(`Editar ${column}:`, currentValue);
+        
+            if (newValue !== null && newValue !== currentValue) {
+
+                delete fields[column];
+        
+                
+                fields[column] = newValue;
+                
+                const db_fields = {
+                    nombre: fields['Nombre'],
+                    apellido: fields['Apellido'],
+                    fechanacim: fields['Fecha_de_Nacimiento'],
+                    equipoid: fields['ID_Equipo'],
+                    altura: fields['Altura'],
+                    peso: fields['Peso'],
+                    numero: fields['Numero']
+                }
+
+                            
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+
+                var raw = JSON.stringify(db_fields)
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                }
+
+                fetch(`http://api.donostipub.eus/basket/players/${id}`, requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message)
+                    if (data.message !== "") {
+                        alert('Datos actualizados con exito')
+                        selected_cell.textContent = newValue;
+                    
+                    } else {
+                        alert('Error al actualizar en el servidor.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            }
+        } else {
+           
+            console.error('La celda seleccionada no es una clave en el objeto fields.');
+        }
+    }
+
+    //DELETE
+    function deleteData(id){
+        const dataTable = document.getElementById("dataTable")
+
+        var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+        
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        }
+
+        fetch(`http://api.donostipub.eus/basket/players/${id}`, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message !== "") {
+                // Realizar acciones adicionales si la eliminación en el servidor fue exitosa
+                alert('Eliminación exitosa');
+                const deletedRow = document.querySelector(`#ID_${id}`);
+                console.log(`ID_${id}`)
+                deletedRow.style.display = "none";
+                                
+            } else {
+                console.error('Error al eliminar en el servidor.');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error)
+    })
+}
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const dataTable = document.getElementById("dataTable");
+
+        searchInput.addEventListener("input", function () {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            Array.from(dataTable.rows).forEach(function (row, index) {
+                if (index !== 0) { // Ignora la primera fila (encabezados)
+                    const rowData = Array.from(row.cells).map(cell => cell.textContent.toLowerCase());
+                    const match = rowData.some(data => data.includes(searchTerm));
+                    row.style.display = match ? "" : "none";
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock  %}

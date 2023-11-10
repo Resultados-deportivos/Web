@@ -6,7 +6,7 @@ from http import cookies
 import datetime
 import time
 
-
+# Get the templates
 env = Environment(loader=FileSystemLoader('templates'))
 index = env.get_template('index.html')
 publicacion = env.get_template('publicacion.html')
@@ -18,10 +18,23 @@ sign_in = env.get_template('sign-in.html')
 sign_up = env.get_template('sign-up.html')
 admin = env.get_template('admin.html')
 crud = env.get_template('crud.html')
+cr_user = env.get_template('cr_user.html')
+cr_team = env.get_template('cr_team.html')
+cr_league = env.get_template('cr_league.html')
+cr_player = env.get_template('cr_player.html')
+cr_post = env.get_template('cr_post.html')
+cr_evento = env.get_template('cr_evento.html')
+ls_evento = env.get_template('ls_evento.html')
+ls_league = env.get_template('ls_league.html')
+ls_player = env.get_template('ls_player.html')
+ls_post = env.get_template('ls_post.html')
+ls_team = env.get_template('ls_team.html')
+ls_user = env.get_template('ls_user.html')
 forgot_pass = env.get_template('forgot_password.html')
 forgot_pass_code = env.get_template('forgot_passwd_code.html')
 set_new_pass = env.get_template('set_new_password.html')
 logout = env.get_template('logout.html')
+# User info is a global variable that will be used to store the user information
 user_info = {}
 
 
@@ -323,8 +336,8 @@ def page_sign_up(environ, start_response):
 
 
 def page_admin(environ, start_response):
-    usuarios = get_users(correo="admin%40gmail.com", admin=True)
-    print(f"{usuarios} fjhsjklnfsdjnvkj")
+    flash_manager = FlashMessageManager()
+    usuarios = get_users(admin=True)
     admin_user = None
 
     if environ['REQUEST_METHOD'] == 'POST':
@@ -337,11 +350,13 @@ def page_admin(environ, start_response):
             True)
 
     if admin_user:
-        response_headers = [('Location', '/es/admin/crud/')]
+        flash_manager.add_message('Bienvenido', 'success')  # Add a flash message
+        response_headers = [('Location', '/es/admin/crud/cr_user')]
         status = '302 Found'
         start_response(status, response_headers)
         return []
-    response = admin.render(css_name='login.css').encode(
+
+    response = admin.render(css_name='login.css',flash_message=flash_manager.get_messages()).encode(
         'utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
@@ -349,24 +364,246 @@ def page_admin(environ, start_response):
     return [response]
 
 
-def page_crud(environ, start_response):
-    # usuarios=get_users()
-    competiciones = get_leagues()
-    equipos = get_teams()
-    players_list = get_players()
-    print(players_list)
-    partidos = get_events()
-    publicaciones = get_posts()
-    comments_list = get_comments()
-    # likes_list = get_likes()
+'''
+def page_admin(environ, start_response):
+    usuarios = get_users(admin=True)
+    admin_user = None
 
-    # response = crud.render(usuarios=usuarios, competiciones=competiciones, equipos=equipos, partidos=partidos, comments_list=comments_list, publicaciones=publicaciones).encode('utf-8')
-    response = crud.render(competiciones=competiciones, equipos=equipos, partidos=partidos,
-                           comments_list=comments_list, publicaciones=publicaciones).encode('utf-8')
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        email = form_data.get('email')
+        password = form_data.get('password')
+
+        # Buscar el usuario en la lista de usuarios con "admin" True
+        admin_user = next(
+            (user for user in usuarios if user['correo'] == email and user['contrasena'] == password and user['admin']),
+            True)
+
+    if admin_user:
+
+        response_headers = [('Location', '/es/admin/crud/')]
+        status = '302 Found'
+        start_response(status, response_headers)
+        return []
+
+    response = admin.render(css_name='login.css', message="No se encontró").encode('utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
     start_response(status, response_headers)
     return [response]
+
+'''
+
+
+def page_crud(environ, start_response):
+    response = cr_user.render(url='/cr_user').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        nombre = form_data.get('nombre')
+        password = form_data.get('contrasena')
+        admin = form_data.get('admin')
+        email = form_data.get('correo')
+        try:
+
+            insert_users_data(str(nombre[0]), str(password[0]), str(email[0]), bool(admin))
+
+        except Exception as e:
+            print(f"Ha ocurrido un error: {e}")
+
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_team(environ, start_response):
+    ligas = get_leagues()
+    response = cr_team.render(ligas=ligas, url='/cr_team').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/cr_team')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        nombre = form_data.get('nombre')
+        ciudad = form_data.get('ciudad')
+        logo = form_data.get('logo')
+        liga = form_data.get('liga', [''])[0]
+
+        try:
+            id_league = get_leagues(nombre=liga)[0]['id']
+            print(id_league)
+            insert_teams_data(str(nombre[0]), str(ciudad[0]), str(logo[0]), id_league)
+        except Exception as e:
+            print(f"Ha ocurrido un error: {e}")
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_league(environ, start_response):
+    response = cr_league.render(url='/cr_league').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/cr_league')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        nombre = form_data.get('nombre')
+        logo = form_data.get('logo')
+        temp_actual = form_data.get('temp_actual')
+        youtube = form_data.get('yt')
+        web = form_data.get('web')
+
+        try:
+            insert_league_data(str(nombre[0]), str(logo[0]), int(temp_actual[0]), str(youtube[0]), str(web[0]))
+        except Exception as e:
+            print(f"Ha ocurrido un error: {e}")
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_player(environ, start_response):
+    equipos = get_teams()
+    response = cr_player.render(equipos=equipos, url='/cr_player').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/cr_player')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        nombre = form_data.get('nombre')
+        print(nombre)
+        apellido = form_data.get('apellido')
+        print(apellido)
+        fecha_nacimiento = str(form_data.get('fecha_nacim')[0])
+        print(fecha_nacimiento)
+        equipo = form_data.get('equipo', [''])[0]
+        print(equipo)
+        altura = form_data.get('altura')
+        print(altura)
+        peso = form_data.get('peso')
+        print(peso)
+        numero = form_data.get('numero')
+        print(numero)
+
+        try:
+            id_team = get_teams(nombre=equipo)[0]['id']
+            print(id_team)
+            insert_player_data(str(nombre[0]), str(apellido[0]), fecha_nacimiento, id_team, str(altura[0]),
+                               str(peso[0]), int(numero[0]))
+        except Exception as e:
+            print(f"Ha ocurrido un error: {e}")
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_post(environ, start_response):
+    response = cr_post.render(url='/cr_post').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/cr_post')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        img = form_data.get('img')
+        titulo = form_data.get('titulo')
+        descripcion = form_data.get('descripcion')
+
+        try:
+            insert_publications_data(str(img[0]), str(titulo[0]), str(descripcion[0]))
+        except Exception as e:
+            print(f"Ha ocurrido un error: {e}")
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_evento(environ, start_response):
+    estadios = get_stadiums()
+    print(estadios)
+    ligas = get_leagues()
+    response = cr_evento.render(estadios=estadios, ligas=ligas, url='/cr_evento').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/cr_evento')]
+    if environ['REQUEST_METHOD'] == 'POST':
+        form_data = parse_post_data(environ)
+        nombre = form_data.get('nombre')
+        fecha = str(form_data.get('fecha')[0])
+        hora_ini = str(form_data.get('hora_inicio')[0])
+        print(hora_ini)
+        hora_fin = str(form_data.get('hora_fin')[0])
+        print(hora_fin)
+        temporada = form_data.get('temporada')
+        estadio = form_data.get('estadio', [''])[0]
+        liga = form_data.get('liga', [''])[0]
+
+        try:
+            id_estadio = get_stadiums(nombre=estadio)[0]['id']
+            print(id_estadio)
+            id_liga = get_leagues(nombre=liga)[0]['id']
+            print(id_liga)
+            insert_events_data(str(nombre[0]), fecha, hora_ini, hora_fin, str(temporada[0]), id_estadio, id_liga)
+        except Exception as e:
+            print(f"Ha ocurrido un error: {e}")
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_ls_evento(environ, start_response):
+    eventos = get_events()
+    response = ls_evento.render(eventos=eventos, url='/ls_evento').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/ls_evento')]
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_ls_league(environ, start_response):
+    ligas = get_leagues()
+    response = ls_league.render(ligas=ligas, url='/ls_league').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/ls_league')]
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_ls_player(environ, start_response):
+    players = get_players()
+    # print(players)
+    response = ls_player.render(players=players, url='/ls_player').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/ls_player')]
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_ls_post(environ, start_response):
+    posts = get_posts()
+    # print(players)
+    response = ls_post.render(posts=posts, url='/ls_post').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/ls_post')]
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_ls_team(environ, start_response):
+    teams = get_teams()
+    # print(players)
+    response = ls_team.render(teams=teams, url='/ls_team').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/ls_team')]
+    start_response(status, response_headers)
+    return [response]
+
+
+def page_crud_ls_user(environ, start_response):
+    users = get_users()
+    # print(users)
+    response = ls_user.render(users=users, url='/ls_user').encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html'), ('Location', 'es/admin/crud/ls_user')]
+    start_response(status, response_headers)
+    return [response]
+
+
+'''def page_crear(environ, start_response):
+    response = cr_user.render().encode('utf-8')
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/html')]
+    start_response(status, response_headers)
+    return[response]'''
 
 
 def clear_cookie(cookie_name):

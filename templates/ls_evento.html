@@ -1,0 +1,175 @@
+{% extends "crear.html" %}
+{% block content_ls_evento  %}
+<table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Fecha</th>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
+                <th>Temporada</th>
+                <th>ID Estadio</th>
+                <th>ID Liga</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evento in eventos %}
+            <tr id="ID_{{evento.id}}">
+                <td>{{evento.id}}</td>
+                <td id="Nombre_{{evento.id}}" ondblclick="editCell('Nombre', {{evento.id}})">{{evento.nombre}}</td>
+                <td id="Fecha_{{evento.id}}" ondblclick="editCell('Fecha', {{evento.id}})">{{evento.fecha}}</td>
+                <td id="Hora_Inicio_{{evento.id}}" ondblclick="editCell('Hora_Inicio', {{evento.id}})">{{evento.horainicio}}</td>
+                <td id="Hora_Fin_{{evento.id}}" ondblclick="editCell('Hora_Fin', {{evento.id}})">{{evento.horafin}}</td>
+                <td id="Temporada_{{evento.id}}" ondblclick="editCell('Temporada', {{evento.id}})">{{evento.temporada}}</td>
+                <td id="ID_Estadio_{{evento.id}}" ondblclick="editCell('ID_Estadio', {{evento.id}})">{{evento.idestadios}}</td>
+                <td id="ID_Liga_{{evento.id}}" ondblclick="editCell('ID_Liga', {{evento.id}})">{{evento.idliga}}</td>
+                <td class="actions">
+                    <button class="delete" onclick="deleteData({{evento.id}})">Eliminar</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+<script>
+    //PUT
+    function editCell(column, id){
+        const selected_cell = document.getElementById(`${column}_${id}`);
+        const currentValue = selected_cell.textContent;
+        const nombre = document.getElementById(`Nombre_${id}`);
+        const fecha = document.getElementById(`Fecha_${id}`)
+        const horainicio = document.getElementById(`Hora_Inicio_${id}`)
+        const horafin = document.getElementById(`Hora_Fin_${id}`)
+        const temporada = document.getElementById(`Temporada_${id}`)
+        const idestadios = document.getElementById(`ID_Estadio_${id}`)
+        const idliga = document.getElementById(`ID_Liga_${id}`)
+        
+        const fields = {
+             Nombre: nombre.textContent,
+             Fecha: fecha.textContent,
+             Hora_Inicio: horainicio.textContent,
+             Hora_Fin: horafin.textContent,
+             Temporada: temporada.textContent,
+             ID_Estadio: idestadios.textContent,
+             ID_Liga: idliga.textContent
+        }
+
+        if (column in fields) {
+            
+            const newValue = prompt(`Editar ${column}:`, currentValue);
+        
+            if (newValue !== null && newValue !== currentValue) {
+
+                delete fields[column];
+        
+                
+                fields[column] = newValue;
+                
+                const db_fields = {
+                    nombre: fields['Nombre'],
+                    fecha: fields['Fecha'],
+                    horainicio: fields['Hora_Inicio'],
+                    horafin: fields['Hora_Fin'],
+                    temporada: fields['Temporada'],
+                    idestadios: fields['ID_Estadio'],
+                    idliga: fields['ID_Liga']
+                }
+
+                console.log(db_fields['nombre'])
+                console.log(db_fields['fecha'])
+                console.log(db_fields['horainicio'])
+                console.log(db_fields['horafin'])
+                console.log(db_fields['temporada'])
+                console.log(db_fields['idestadios'])
+                console.log(db_fields['idliga'])
+                
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+
+                var raw = JSON.stringify(db_fields)
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                }
+
+                fetch(`http://api.donostipub.eus/basket/events/${id}`, requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message)
+                    if (data.message !== "") {
+                        alert('Datos actualizados con exito')
+                        selected_cell.textContent = newValue;
+                    
+                    } else {
+                        alert('Error al actualizar en el servidor.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            }
+        } else {
+           
+            console.error('La celda seleccionada no es una clave en el objeto fields.');
+        }
+    }
+
+    //DELETE
+    function deleteData(id){
+        const dataTable = document.getElementById("dataTable")
+
+        var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+        
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        }
+
+        fetch(`http://api.donostipub.eus/basket/events/${id}`, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message !== "") {
+                // Realizar acciones adicionales si la eliminación en el servidor fue exitosa
+                alert('Eliminación exitosa');
+                const deletedRow = document.querySelector(`#ID_${id}`);
+                console.log(`ID_${id}`)
+                deletedRow.style.display = "none";
+                                
+            } else {
+                console.error('Error al eliminar en el servidor.');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error)
+    })
+}
+
+    
+    // FILTRO
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const dataTable = document.getElementById("dataTable");
+
+        searchInput.addEventListener("input", function () {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            Array.from(dataTable.rows).forEach(function (row, index) {
+                if (index !== 0) { // Ignora la primera fila (encabezados)
+                    const rowData = Array.from(row.cells).map(cell => cell.textContent.toLowerCase());
+                    const match = rowData.some(data => data.includes(searchTerm));
+                    row.style.display = match ? "" : "none";
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock  %}

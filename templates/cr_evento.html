@@ -1,0 +1,35 @@
+{% extends "crear.html" %}
+{% block title %}EVENTO{% endblock title %}EVENTO
+{% block content_event %}
+<div class="container">
+    <form id="forgot" method="post" >
+        <label for="code">CREAR EVENTO</label>
+        <label for="nombre">Introduce un nombre:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre">
+        <label for="fecha">Introduce la fecha del evento:</label>
+        <input type="date" id="fecha" name="fecha">
+        <label for="hora_inicio">Introduce la hora de inicio del evento:</label>
+        <input type="time" id="hora_inicio" name="hora_inicio" pattern="[0-9]{2}:[0-9]{2}">
+        <label for="hora_fin">Introduce la hora de fin del evento:</label>
+        <input type="time" id="hora_fin" name="hora_fin">
+        <label for="temporada">Ingresa la temporada en la que tendrá lugar el evento:</label>
+        <input type="number" id="temporada" name="temporada" placeholder="2023">
+        <label for="estadio">Selecciona el estadio del evento</label>
+        <select name="estadio" id="estadio">
+            <option value="default">Seleccione un estadio:</option>
+            {% for estadio in estadios %}
+                <option value="{{estadio.localizacion}}">{{estadio.localizacion}}</option>
+            {% endfor %}
+        </select>
+        <label for="liga">Selecciona la liga a la que pertenece el evento:</label>
+        <select name="liga" id="liga">
+            <option value="default">Seleccione una liga</option>
+            {% for liga in ligas %}
+                <option value="{{liga.nombre}}">{{liga.nombre}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Crear</button>
+        
+    </form>
+</div>
+{% endblock %}

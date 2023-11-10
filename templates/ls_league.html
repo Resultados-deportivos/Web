@@ -1,0 +1,165 @@
+{% extends "crear.html" %}
+{% block content_ls_league %}
+<table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Logo</th>
+                <th>Temporada Actual</th>
+                <th>Youtube</th>
+                <th>Web</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for liga in ligas %}
+            <tr id="ID_{{liga.id}}">
+                <td>{{liga.id}}</td>
+                <td id="Nombre_{{liga.id}}" ondblclick="editCell('Nombre', {{liga.id}})">{{liga.nombre}}</td>
+                <td id="Logo_{{liga.id}}" ondblclick="editCell('Logo', {{liga.id}})">{{liga.logo}}</td>
+                <td id="Temporada_Actual_{{liga.id}}" ondblclick="editCell('Temporada_Actual', {{liga.id}})">{{liga.temporadaactual}}</td>
+                <td id="Youtube_{{liga.id}}" ondblclick="editCell('Youtube', {{liga.id}})">{{liga.yotube}}</td>
+                <td id="Web_{{liga.id}}" ondblclick="editCell('Web', {{liga.id}})">{{liga.web}}</td>
+                <td class="actions">
+                    <button class="delete" onclick="deleteData({{liga.id}})">Eliminar</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+<script>
+    //PUT
+    function editCell(column, id){
+        const selected_cell = document.getElementById(`${column}_${id}`);
+        const currentValue = selected_cell.textContent;
+        const nombre = document.getElementById(`Nombre_${id}`);
+        const logo = document.getElementById(`Logo_${id}`)
+        const temporadaactual = document.getElementById(`Temporada_Actual_${id}`)
+        const youtube = document.getElementById(`Youtube_${id}`)
+        const web = document.getElementById(`Web_${id}`)
+       
+        
+        const fields = {
+             Nombre: nombre.textContent,
+             Logo: logo.textContent,
+             Temporada_Actual: temporadaactual.textContent,
+             Youtube: youtube.textContent,
+             Web: web.textContent,
+        }
+
+        if (column in fields) {
+            
+            const newValue = prompt(`Editar ${column}:`, currentValue);
+        
+            if (newValue !== null && newValue !== currentValue) {
+
+                delete fields[column];
+        
+                
+                fields[column] = newValue;
+                
+                const db_fields = {
+                    nombre: fields['Nombre'],
+                    logo: fields['Logo'],
+                    temporadaactual: fields['Temporada_Actual'],
+                    youtube: fields['Youtube'],
+                    web: fields['Web'],
+                    
+                }
+
+                console.log(db_fields['nombre'])
+                console.log(db_fields['logo'])
+                console.log(db_fields['temporadaactual'])
+                console.log(db_fields['youtube'])
+                console.log(db_fields['web'])
+                
+                
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+
+                var raw = JSON.stringify(db_fields)
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                }
+
+                fetch(`http://api.donostipub.eus/basket/leagues/${id}`, requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message)
+                    if (data.message !== "") {
+                        alert('Datos actualizados con exito')
+                        selected_cell.textContent = newValue;
+                    
+                    } else {
+                        alert('Error al actualizar en el servidor.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            }
+        } else {
+           
+            console.error('La celda seleccionada no es una clave en el objeto fields.');
+        }
+    }
+
+    //DELETE
+    function deleteData(id){
+        const dataTable = document.getElementById("dataTable")
+
+        var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("apikey", "apikey")
+        
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        }
+
+        fetch(`http://api.donostipub.eus/basket/leagues/${id}`, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message !== "") {
+                // Realizar acciones adicionales si la eliminación en el servidor fue exitosa
+                alert('Eliminación exitosa');
+                const deletedRow = document.querySelector(`#ID_${id}`);
+                console.log(`ID_${id}`)
+                deletedRow.style.display = "none";
+                                
+            } else {
+                console.error('Error al eliminar en el servidor.');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error)
+    })
+}
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const dataTable = document.getElementById("dataTable");
+
+        searchInput.addEventListener("input", function () {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            Array.from(dataTable.rows).forEach(function (row, index) {
+                if (index !== 0) { // Ignora la primera fila (encabezados)
+                    const rowData = Array.from(row.cells).map(cell => cell.textContent.toLowerCase());
+                    const match = rowData.some(data => data.includes(searchTerm));
+                    row.style.display = match ? "" : "none";
+                }
+            });
+        });
+
+        // Resto de tu script...
+    });
+</script>
+
+{% endblock  %}
