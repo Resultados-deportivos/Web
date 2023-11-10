@@ -1,4 +1,4 @@
-// Remember: Try to work this on script.js
+// Redirect to pages
 function sign_in() {
     window.location.href = '/es/sign-in';
 }
@@ -36,25 +36,28 @@ const popupDescription = document.getElementById('popup-description');
 const closePopup = document.getElementById('close-popup');
 const imgPopup = document.getElementById('popup-img');
 const inputPopup = document.getElementById('input-popup');
+
 cards.forEach(card => {
     card.addEventListener('click', () => {
         const index = card.getAttribute('data-index');
         const title = card.getAttribute('data-title');
         const descripcion = card.getAttribute('data-descripcion');
         const img = card.getAttribute('data-img');
-        console.log(index);
-        console.log(title);
-
-        imgPopup.src = `/static/img/publicaciones/${img}`;
-        popupTitle.textContent = `${title}`;
-        popupDescription.textContent = `${descripcion}`;
-        inputPopup.setAttribute('value', `${index}`);
-        popup.style.display = 'flex';
+        if (index !== null){
+            imgPopup.src = `/static/img/publicaciones/${img}`;
+            popupTitle.textContent = `${title}`;
+            popupDescription.textContent = `${descripcion}`;
+            inputPopup.setAttribute('value', `${index}`);
+            popup.style.display = 'flex';
+        }
         });
     });
-    closePopup.addEventListener('click', () => {
-        popup.style.display = 'none';
-    });
+    if(closePopup !== null){
+        closePopup.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+    }
+    
 console.log("ESTO FUNCIONA")
 
 // Pop-up if user not logged in

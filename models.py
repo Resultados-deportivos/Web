@@ -811,5 +811,5 @@ def update_passwd(email, new_passwd):
 
 
 if __name__ == '__main__':
-    print(get_likes_count(78))
+    print(get_likes_count(1))
     print(get_like(publicacionid=1, userid=1))
