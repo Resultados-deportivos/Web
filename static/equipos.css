@@ -15,7 +15,18 @@
 .description {
     margin-bottom: 10px;
 }
+.liga{
+    display:flex;
+    flex-direction:row;
 
+}
+.liga img{
+    margin-left: 10px;
+}
+
+.e_logo{
+margin-left:80px;
+}
 .e_logo img {
     width: auto;
     height: 100px;

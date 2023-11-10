@@ -44,7 +44,6 @@ def page_index(environ, start_response):
         'utf-8')
     status = '200 OK'
     response_headers = [('Content-type', 'text/html')]
-    # response_headers.append(('Set-Cookie', str(user_info)))
     start_response(status, response_headers)
     return [response]
 
@@ -146,6 +145,7 @@ def page_sign_in(environ, start_response):
             user_info['username'] = user[0]['nombre']
             user_info['id'] = user[0]['id']
             user_info['email'] = user[0]['correo']
+            # Redirigir al usuario a la página de inicio
             redirect_location = '/es/inicio'
         else:
             flash_manager.add_message("El usuario o contraseña no existen.", "error")
@@ -158,12 +158,15 @@ def page_sign_in(environ, start_response):
     start_response(status, response_headers)
     return [response]
 
+# Global variables for password recovery
+
 
 verification_code = 0
 email = None
 
 
 def page_forgot_password(environ, start_response):
+    flash_manager = FlashMessageManager()
     global verification_code
     global email
     verification_code = generate_verification_code()
@@ -180,12 +183,13 @@ def page_forgot_password(environ, start_response):
             # Envía el código de verificación por correo electrónico
             send_email(email, verification_code)
         else:
+            flash_manager.add_message("No existe usuario con este email", "error")
             print("No existe usuario con este email")
     else:
         # En caso de que no sea una solicitud POST, mantener el estado 200 OK
         status = '200 OK'
         response_headers = []
-    response = forgot_pass.render().encode('utf-8')
+    response = forgot_pass.render(flash_messages=flash_manager.get_messages()).encode('utf-8')
     start_response(status, response_headers)
     return [response]
 
@@ -310,7 +314,7 @@ def page_crud(environ, start_response):
 def clear_cookie(cookie_name):
     cookie = cookies.SimpleCookie()
     cookie[cookie_name] = ''
-    # Establecer una fecha de expiración en el pasado (por ejemplo, hace 1 segundo)
+    # Establecer una fecha de expiración en el pasado
     expiration_time = datetime.datetime.now() - datetime.timedelta(seconds=1)
     cookie[cookie_name]['expires'] = expiration_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
     return cookie

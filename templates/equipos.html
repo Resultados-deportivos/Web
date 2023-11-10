@@ -10,8 +10,11 @@
             <p><span class="material-symbols-outlined">location_on</span> {{ equipo.ciudad }}</p>
             {% for liga in leagues %}
             {% if equipo.id_liga == liga.id %}
-                <h3>{{ liga.nombre }}</h3>
-                <img src="/static/img/leagues_logo/{{ liga.logo }}.png" height="50px" width="auto" alt="{{ liga.nombre }}">
+            <div class="liga">
+                <div><h3>{{ liga.nombre }}</h3></div>
+                <div><img src="/static/img/leagues_logo/{{ liga.logo }}.png" height="50px" width="auto" alt="{{ liga.nombre }}"></div>
+            </div>
+
             {% endif %}
         {% endfor %}
 

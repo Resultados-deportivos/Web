@@ -12,9 +12,9 @@ from passlib.hash import sha256_crypt
 
 load_dotenv()  # Esto funciona para no tener credenciales guardadas en el propio codigo
 
-# api_url = "http://donostipub.eus/basket/"
-# api_url = "http://52.91.131.22/basket/"
-api_url = "http://localhost:8080/basket/"
+api_url = "http://api.donostipub.eus/basket/"
+#api_url = "http://52.91.131.22/basket/"
+# api_url = "http://localhost:8080/basket/"
 
 url = URL.create("postgresql", username=os.getenv('USERNAME_DATABASE'), password=os.getenv('PASSWORD_DATABASE'),
                  host=os.getenv('HOST_DATABASE'), database=os.getenv('NAME_DATABASE'))
@@ -542,6 +542,40 @@ def get_like(publicacionid, userid):
             print(f"Error: {e}")
 
 
+def delete_like(likeid):
+    endpoint_name = f"likes/{likeid}"
+    print("likeid: ", likeid)
+    header = {
+        'apikey': 'apikey'
+    }
+    response = requests.request(method="DELETE",url=api_url + endpoint_name, headers=header)
+    try:
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            print(f"Response code: {response.status_code}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+def update_like(publicacionid, usuarioid, like):
+    endpoint_name = f"likes/{publicacionid},{usuarioid},{like}"
+    header = {
+        'apikey': 'apikey'
+    }
+
+    try:
+        response = requests.put(api_url + endpoint_name, headers=header)
+
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            print(f"Response code: {response.status_code}")
+    except Exception as e:
+        print(f"Error: {e}")
+
 
 def get_posts(id=None, titulo=None):
     '''
@@ -811,5 +845,7 @@ def update_passwd(email, new_passwd):
 
 
 if __name__ == '__main__':
-    print(get_likes_count(1))
-    print(get_like(publicacionid=1, userid=1))
+    print(delete_like(9))
+    #print(update_like(1, 1, 1))
+    #print(get_likes_count(1))
+    #print(get_like(publicacionid=1, userid=1))
