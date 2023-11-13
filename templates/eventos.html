@@ -14,17 +14,17 @@
                 {% endif %}
     {% endfor %}
     <div class="card">
-        {%  for score in scores %}
+
         <h2>
             {{ partido.nombre.split('-')[0] }}
-            {% if score.eventoid == partido.id %}
-            {{ score.puntos }}
-            {% else %}
-            {{ ' _ - _ ' }}
-            {% endif %}
+            {% for score in scores %}
+                {% if score.eventoid == partido.id %}
+                    {{ score.puntos }}
+                {% endif %}
+            {% endfor %}
             {{ partido.nombre.split('-')[1] }}
         </h2>
-        {% endfor %}
+
         <p>{{ partido.horainicio }} - {{ partido.horafin }}</p>
         {% for estadio in estadios %}
         {% if partido.idestadios == estadio.id %}
